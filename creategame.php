@@ -1,4 +1,5 @@
 <?php 
+require "encryptionlib.php";
 
 function generateRandomString($length = 10) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -16,6 +17,7 @@ $userToken = session_id();
 $matchid = generateRandomString(16);
 
 $json_data = file_get_contents('games.json');
+$json_data = Decrypted($json_data);
 $decoded = json_decode($json_data, true);
 
 $decoded[$matchid]["player1"] = $userToken;
@@ -26,6 +28,7 @@ $decoded[$matchid]["p1symbol"] = "null";
 $decoded[$matchid]["p2symbol"] = "null";
 
 $finalJson = json_encode($decoded);
+$finalJson = Encrypted($finalJson);
 $myfile = fopen("games.json", "w") or die("Unable to open file!");
 
 fwrite($myfile, $finalJson);

@@ -1,5 +1,9 @@
-<?php 
+<?php
+
+    require "encryptionlib.php";
     error_reporting(0);
+
+    
 
     function debugLog($message) {
         $myfile = fopen("log.txt", "a") or die("Unable to open file!");
@@ -10,6 +14,7 @@
 
     function checkWin($matchid, $symbol) {
         $json_data = file_get_contents('games.json');
+        $json_data = Decrypted($json_data);
         $decoded = json_decode($json_data, true);
         $board = $decoded[$matchid]["board"];
 
@@ -110,6 +115,7 @@
     $matchid = $_GET["match"];
     $token = $_GET["token"];
     $json_data = file_get_contents('games.json');
+    $json_data = Decrypted($json_data);
     $json_data = json_decode($json_data, true);
     $status = $json_data[$matchid]["status"];
 
@@ -178,6 +184,7 @@
         
 
         $finalJson = json_encode($json_data);
+        $finalJson = Encrypted($finalJson);
         $myfile = fopen("games.json", "w") or die("Unable to open file!");
 
         fwrite($myfile, $finalJson);
@@ -197,6 +204,7 @@
             debugLog("draw");
         }
         $finalJson = json_encode($json_data);
+        $finalJson = Encrypted($finalJson);
         $myfile = fopen("games.json", "w") or die("Unable to open file!");
 
         fwrite($myfile, $finalJson);
@@ -225,6 +233,7 @@
         
 
         $finalJson = json_encode($json_data);
+        $finalJson = Encrypted($finalJson);
         $myfile = fopen("games.json", "w") or die("Unable to open file!");
 
         fwrite($myfile, $finalJson);

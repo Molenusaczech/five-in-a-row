@@ -1,5 +1,7 @@
 <?php 
+require "encryptionlib.php";
 session_start();
+
 
 if ($_GET["match"] == "" or $_GET["match"] == null) {
     header("Location: index.php");
@@ -8,6 +10,7 @@ if ($_GET["match"] == "" or $_GET["match"] == null) {
 
 //if there is not p2, then set p2 to the userToken
 $json_data = file_get_contents('games.json');
+$json_data = Decrypted($json_data);
 $decoded = json_decode($json_data, true);
 $token = session_id();
 
@@ -16,6 +19,7 @@ if ($decoded[$_GET["match"]]["player2"] == "null" && $token !== $decoded[$_GET["
     $decoded[$_GET["match"]]["status"] = "swap1"; 
 
     $finalJson = json_encode($decoded);
+    $finalJson = Encrypted($finalJson);
     $myfile = fopen("games.json", "w") or die("Unable to open file!");
 
     fwrite($myfile, $finalJson);
