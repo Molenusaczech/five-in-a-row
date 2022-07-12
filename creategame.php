@@ -1,4 +1,5 @@
 <?php 
+error_reporting(0);
 function Encrypted($text) {
     $key = getenv('key');
     $string = $text;
