@@ -1,8 +1,24 @@
 <?php
 
-    require "encryptionlib.php";
+    
     error_reporting(0);
 
+    function Encrypted($text) {
+        $key = getenv('key');
+        $string = $text;
+        $pass = $key;
+        $method = 'aes128';
+        return openssl_encrypt($string, $method, $pass);
+    
+    }
+    
+    function Decrypted($text) {
+        $key = getenv('key');
+        $string = $text;
+        $pass = $key;
+        $method = 'aes128';
+        return openssl_decrypt($string, $method, $pass);
+    }
     
 
     function debugLog($message) {

@@ -1,7 +1,24 @@
 <?php 
-require "encryptionlib.php";
-session_start();
 
+session_start();
+error_reporting(0);
+
+function Encrypted($text) {
+    $key = getenv('key');
+    $string = $text;
+    $pass = $key;
+    $method = 'aes128';
+    return openssl_encrypt($string, $method, $pass);
+
+}
+
+function Decrypted($text) {
+    $key = getenv('key');
+    $string = $text;
+    $pass = $key;
+    $method = 'aes128';
+    return openssl_decrypt($string, $method, $pass);
+}
 
 if ($_GET["match"] == "" or $_GET["match"] == null) {
     header("Location: index.php");
@@ -26,7 +43,22 @@ if ($decoded[$_GET["match"]]["player2"] == "null" && $token !== $decoded[$_GET["
     fclose($myfile);
 }
 
+/* 
+colors: 
+#E1ECF9
 
+ 
+#609CE1
+
+ 
+#236AB9
+
+ 
+#133863
+
+ 
+#091D34
+*/
 
 ?>
 
@@ -36,6 +68,9 @@ if ($decoded[$_GET["match"]]["player2"] == "null" && $token !== $decoded[$_GET["
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
     <title>Document</title>
 
 <style>
@@ -51,10 +86,10 @@ body {
 }
 
 .field {
-    width: 50px;
-    height: 50px;
-    background-color: #ccc;
-    border: 1px solid #000;
+    width: 60px;
+    height: 60px;
+    background-color: #E1ECF9;
+    border: 1px solid #091D34;
     float: left;
 }
 
@@ -74,13 +109,16 @@ body {
     font-size: 20px;
     text-align: center;
     vertical-align: middle;
-    background-color: #ccc;
-    border: 1px solid #000;
+    background-color: #609CE1;
+    border: 1px solid #091D34;
     display: none;
+    font-family: 'Roboto Slab', serif;
+    float: left;
+    color: #091D34;
 }
 
 .symbolChoose {
-    border: 1px solid #000;
+    border: 1px solid #091D34;
     width: 40%;
     height: 45px;
     text-align: center;
@@ -89,6 +127,8 @@ body {
     margin-left: 7%;
     font-size: 40px;
     line-height: normal;
+    font-family: 'Roboto Slab', serif;
+    color: #091D34;
 }
 
 .symbolChoose:hover {
@@ -108,7 +148,37 @@ body {
     left: 45%;
     top: 45%;
     z-index: 100;
+    font-family: 'Roboto Slab', serif;
+    
+}
 
+#main {
+    float: left;
+    
+    /*top: 10%;
+    left: 22vw;*/
+
+    
+    line-height: 60px;
+
+}
+
+header {
+    width: 100%;
+    height: 50px;
+    background-color: #609CE1;
+    float: left;
+    text-align: center;
+    vertical-align: middle;
+    color: #133863;
+    font-family: 'Roboto Slab', serif;
+    font-size: 30px;
+}
+
+#status {
+    color: #133863;
+    font-family: 'Roboto Slab', serif;
+    font-size: 30px;
 }
 
 </style>
@@ -207,6 +277,9 @@ body {
 
     </script>
 
+    <header>Mole's Five-In-Row</header>
+
+    <div id="main">
     <?php 
     
     
@@ -224,6 +297,7 @@ body {
 
     
     ?>
+    </div>
 
     <p id="status">Connecting</p>
     <div id="choose">

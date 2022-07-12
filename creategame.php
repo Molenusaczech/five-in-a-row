@@ -1,5 +1,20 @@
 <?php 
-require "encryptionlib.php";
+function Encrypted($text) {
+    $key = getenv('key');
+    $string = $text;
+    $pass = $key;
+    $method = 'aes128';
+    return openssl_encrypt($string, $method, $pass);
+
+}
+
+function Decrypted($text) {
+    $key = getenv('key');
+    $string = $text;
+    $pass = $key;
+    $method = 'aes128';
+    return openssl_decrypt($string, $method, $pass);
+}
 
 function generateRandomString($length = 10) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
