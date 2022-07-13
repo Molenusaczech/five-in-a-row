@@ -191,6 +191,8 @@
         if (!isset($json_data[$matchid]["board"][$x."/".$y])) {
 
         $json_data[$matchid]["board"][$x."/".$y] = $symbol;
+        $json_data[$matchid]["lastlastmove"] = $json_data[$matchid]["lastmove"];
+        $json_data[$matchid]["lastmove"] = $x."/".$y;
 
         if ($status == "turn1") {
             $json_data[$matchid]["status"] = "turn2";

@@ -204,6 +204,14 @@ header {
         var data = httpGet(link);
         var myObj = JSON.parse(data);
         var board = myObj["board"];
+        if (typeof last == 'undefined') {
+            last = myObj["lastmove"];
+        }
+
+        if (myObj["lastmove"] !== last) {
+            document.getElementById(myObj["lastlastmove"]).style.backgroundColor = "#E1ECF9";
+            document.getElementById(myObj["lastmove"]).style.backgroundColor = "orange";
+        }
         
         console.log(board);
         for (const [key, value] of Object.entries(board)) {
