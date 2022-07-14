@@ -181,6 +181,18 @@ header {
     font-size: 30px;
 }
 
+#rematch {
+    border: 1px solid #091D34;
+    font-size: 20px;
+    line-height: normal;
+    background-color: white;
+    height: 50px;
+}
+
+#rematch:hover {
+    background-color: yellow;
+}
+
 </style>
 
 </head>
@@ -233,17 +245,37 @@ header {
         if (status == "win") {
             console.log("win");
             document.getElementById("dialog").style.display = "block";
-            document.getElementById("dialog").innerHTML = "You win!";
+            document.getElementById("dialogText").innerHTML = "You win!";
         } else if (status == "draw") {
             console.log("draw");
             document.getElementById("dialog").style.display = "block";
-            document.getElementById("dialog").innerHTML = "Draw!";
+            document.getElementById("dialogText").innerHTML = "Draw!";
         } else if (status == "lose") {
             console.log("lose");
             document.getElementById("dialog").style.display = "block";
-            document.getElementById("dialog").innerHTML = "You lose!";
+            document.getElementById("dialogText").innerHTML = "You lose!";
+        } else if (status == "rematchoffered" || status == "waitingforrematch") {
+            document.getElementById("dialog").style.display = "block";
         } else {
             document.getElementById("dialog").style.display = "none";
+        }
+
+        if (status == "waitingforrematch") {
+            document.getElementById("rematch").innerHTML = "Waiting for rematch!";
+        } else if (status == "rematchoffered") {
+            document.getElementById("rematch").innerHTML = "Click to accept rematch!";
+        }
+
+        /*if (status == "redirect") {
+            var link = myObj["redirect"];
+            console.log("redirect: " + link);
+        }*/
+
+        if (typeof myObj["redirect"] === 'undefined') {} else {
+            var link = myObj["redirect"];
+            console.log("redirect: " + link);
+            window.location.href = link;
+
         }
 
     }, 1000)
@@ -277,6 +309,12 @@ header {
         console.log(symbol);
         var match = urlParams.get('match');
         var link = "/server.php?symbol="+symbol+"&token="+token+"&match="+match;
+        var data = httpGet(link);
+    }
+
+    function rematch() {
+        var match = urlParams.get('match');
+        var link = "/server.php?rematch=true"+"&token="+token+"&match="+match;
         var data = httpGet(link);
     }
 
@@ -316,6 +354,7 @@ header {
 
     <div id="dialog">
         <p id="dialogText">You won!</p>
+        <div id="rematch" onclick="rematch()">Challenge opponent to rematch</div>
     </div>
 
 </body>

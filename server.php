@@ -127,6 +127,45 @@
 
     }
 
+    function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    function createRematch($p1id, $p2id) {
+        $newmatchid = generateRandomString(16);
+        debugLog("createRematch matchid: $newmatchid");
+
+        $json_data = file_get_contents('games.json');
+        $json_data = Decrypted($json_data);
+        debugLog("createRematch json1: $json_data");
+        $decoded = json_decode($json_data, true);
+        
+
+        $decoded[$newmatchid]["player1"] = $p2id;
+        $decoded[$newmatchid]["player2"] = $p1id;
+        $decoded[$newmatchid]["status"] = "swap1";
+        $decoded[$newmatchid]["board"] = array();
+        $decoded[$newmatchid]["p1symbol"] = "null";
+        $decoded[$newmatchid]["p2symbol"] = "null";
+        
+
+        $finalJson = json_encode($decoded);
+        debugLog("createRematch json2: $finalJson");
+        $finalJson = Encrypted($finalJson);
+        $myfile = fopen("games.json", "w") or die("Unable to open file!");
+
+        fwrite($myfile, $finalJson);
+        fclose($myfile);
+
+        return $newmatchid;
+    }
+
 
     $matchid = $_GET["match"];
     $token = $_GET["token"];
@@ -163,7 +202,7 @@
         $playerTurn = "false";
     }
 
-    if ($status == "win1" || $status == "win2") {
+    if ($status == "win1" || $status == "win2" || $status == "rematch1") {
         $playerTurn = "false";
     }
 
@@ -257,6 +296,50 @@
         fwrite($myfile, $finalJson);
         fclose($myfile);
 
+    } else if ($_GET["rematch"] == "true") {
+        if ($status == "win1" || $status == "win2") {
+
+            if ($player == 1) {
+                $json_data[$matchid]["status"] = "rematch1";
+            } else if ($player == 2) {
+                $json_data[$matchid]["status"] = "rematch2";
+            }
+
+            $finalJson = json_encode($json_data);
+            $finalJson = Encrypted($finalJson);
+            $myfile = fopen("games.json", "w") or die("Unable to open file!");
+
+            fwrite($myfile, $finalJson);
+            fclose($myfile);
+
+        } else if ($status == "rematch1" && $player == 2) {
+            $rematchAccepted = 1;
+        } else if ($status == "rematch2" && $player == 1) {
+            $rematchAccepted = 1;
+        }
+
+        if ($rematchAccepted == 1) {
+            $p1id = $json_data[$matchid]["player1"];
+            $p2id = $json_data[$matchid]["player2"];
+            $newmatchid = createRematch($p1id, $p2id);
+
+            $json_data = file_get_contents('games.json');
+            $json_data = Decrypted($json_data);
+            debugLog("createRematch json1: $json_data");
+            $json_data = json_decode($json_data, true);
+
+            $json_data[$matchid]["status"] = "redirect";
+            $json_data[$matchid]["redirect"] = "game.php?match=".$newmatchid;
+
+            $finalJson = json_encode($json_data);
+            $finalJson = Encrypted($finalJson);
+            $myfile = fopen("games.json", "w") or die("Unable to open file!");
+
+            fwrite($myfile, $finalJson);
+            fclose($myfile);
+            die();
+        }
+
     } else {
         
         
@@ -281,6 +364,22 @@
                 $match_data["status"] = "lose";
             } else if ($player == 2) {
                 $match_data["status"] = "win";
+            }
+        }
+
+        if ($status == "rematch1") {
+            if ($player == 1) {
+                $match_data["status"] = "waitingforrematch";
+            } else if ($player == 2) {
+                $match_data["status"] = "rematchoffered";
+            }
+        }
+
+        if ($status == "rematch2") {
+            if ($player == 1) {
+                $match_data["status"] = "rematchoffered";
+            } else if ($player == 2) {
+                $match_data["status"] = "waitingforrematch";
             }
         }
 
