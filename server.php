@@ -191,7 +191,7 @@
         $symbol = "denied";
         $player = 0;
     }
-
+    /*
     // test token validity
     if (strlen($token) == 64) {
         // user is logged in
@@ -201,7 +201,7 @@
             $player = 0;
         }
 
-    }
+    }*/
 
     if ($status == "waiting" || $status == "choose") {
         $playerTurn = "false";
