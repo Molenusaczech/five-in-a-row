@@ -1,4 +1,8 @@
 <?php 
+
+if (!isset($_SESSION['token'])) {
+    $_SESSION['token'] = session_id();   
+}
 error_reporting(0);
 function Encrypted($text) {
     $key = getenv('key');
@@ -29,7 +33,7 @@ function generateRandomString($length = 10) {
 
 session_start();
 
-$userToken = session_id();
+$userToken = $_SESSION['token'];
 $matchid = generateRandomString(16);
 
 $json_data = file_get_contents('games.json');
@@ -37,7 +41,9 @@ $json_data = Decrypted($json_data);
 $decoded = json_decode($json_data, true);
 
 $decoded[$matchid]["player1"] = $userToken;
+$decoded[$matchid]["player1name"] = $_SESSION['login'];
 $decoded[$matchid]["player2"] = "null";
+$decoded[$matchid]["player2name"] = "null";
 $decoded[$matchid]["status"] = "waiting";
 $decoded[$matchid]["board"] = array();
 $decoded[$matchid]["p1symbol"] = "null";

@@ -137,7 +137,7 @@
         return $randomString;
     }
 
-    function createRematch($p1id, $p2id) {
+    function createRematch($p1id, $p2id, $p1name, $p2name) {
         $newmatchid = generateRandomString(16);
         debugLog("createRematch matchid: $newmatchid");
 
@@ -149,6 +149,8 @@
 
         $decoded[$newmatchid]["player1"] = $p2id;
         $decoded[$newmatchid]["player2"] = $p1id;
+        $decoded[$newmatchid]["player1name"] = $p2name;
+        $decoded[$newmatchid]["player2name"] = $p1name;
         $decoded[$newmatchid]["status"] = "swap1";
         $decoded[$newmatchid]["board"] = array();
         $decoded[$newmatchid]["p1symbol"] = "null";
@@ -169,10 +171,15 @@
 
     $matchid = $_GET["match"];
     $token = $_GET["token"];
+    $login = $_GET["login"];
     $json_data = file_get_contents('games.json');
     $json_data = Decrypted($json_data);
     $json_data = json_decode($json_data, true);
     $status = $json_data[$matchid]["status"];
+
+    $user_data = file_get_contents('users.json');
+    $user_data = Decrypted($user_data);
+    $user_data = json_decode($user_data, true);
 
     if ($json_data[$matchid]["player1"] == $token) {
         $symbol = $json_data[$matchid]["p1symbol"];
@@ -183,6 +190,17 @@
     } else {
         $symbol = "denied";
         $player = 0;
+    }
+
+    // test token validity
+    if (strlen($token) == 64) {
+        // user is logged in
+        if ($token !== $user_data[$login]["token"]) {
+            // token is invalid
+            $symbol = "denied";
+            $player = 0;
+        }
+
     }
 
     if ($status == "waiting" || $status == "choose") {
@@ -321,7 +339,9 @@
         if ($rematchAccepted == 1) {
             $p1id = $json_data[$matchid]["player1"];
             $p2id = $json_data[$matchid]["player2"];
-            $newmatchid = createRematch($p1id, $p2id);
+            $p1name = $json_data[$matchid]["player1name"];
+            $p2name = $json_data[$matchid]["player2name"];
+            $newmatchid = createRematch($p1id, $p2id, $p1name, $p2name);
 
             $json_data = file_get_contents('games.json');
             $json_data = Decrypted($json_data);
@@ -427,8 +447,12 @@
             
         } 
 
+        unset($match_data["player1"]);
+        unset($match_data["player2"]);
         
-        
+        if ($match_data["player2name"] == "null") {
+            $match_data["player2name"] = "Wating...";
+        }
     
         $final_data = json_encode($match_data);
         echo $final_data;

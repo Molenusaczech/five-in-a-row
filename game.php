@@ -3,6 +3,21 @@
 session_start();
 error_reporting(0);
 
+function randomName() {
+    $adjectives = ["Awesome", "Epic", "Great", "Tryhard", "Lame", "Cool", "Lame", "Loud", "Anonymous"];
+    $names = ["Guy", "Dude", "Bro", "Beast", "Mole", "Rabbit", "Human", "Person", "Turtle"];
+    $randomNumber = rand(1000, 9999);
+    return $adjectives[rand(0, count($adjectives) - 1)] . $names[rand(0, count($names) - 1)] . $randomNumber;
+}
+
+if (!isset($_SESSION['token'])) {
+    $_SESSION['token'] = session_id();   
+}
+
+if (!isset($_SESSION['login'])) {
+    $_SESSION['login'] = randomName();   
+}
+
 function Encrypted($text) {
     $key = getenv('key');
     $string = $text;
@@ -29,10 +44,11 @@ if ($_GET["match"] == "" or $_GET["match"] == null) {
 $json_data = file_get_contents('games.json');
 $json_data = Decrypted($json_data);
 $decoded = json_decode($json_data, true);
-$token = session_id();
+$token = $_SESSION['token'];
 
 if ($decoded[$_GET["match"]]["player2"] == "null" && $token !== $decoded[$_GET["match"]]["player1"])  {
     $decoded[$_GET["match"]]["player2"] = $token;
+    $decoded[$_GET["match"]]["player2name"] = $_SESSION['login'];
     $decoded[$_GET["match"]]["status"] = "swap1"; 
 
     $finalJson = json_encode($decoded);
@@ -71,127 +87,12 @@ colors:
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
-    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <title>Mole's Five-In-a-Row</title>
 
 <style>
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
-body {
-    line-height: 50px;
-}
-
-.field {
-    width: 60px;
-    height: 60px;
-    background-color: #E1ECF9;
-    border: 1px solid #091D34;
-    float: left;
-}
-
-.field:hover {
-    background-color: yellow;
-}
-
-.field {
-    font-size: 40px;
-    text-align: center;
-    vertical-align: middle;
-}
-
-#choose {
-    width: 200px;
-    height: 125px;
-    font-size: 20px;
-    text-align: center;
-    vertical-align: middle;
-    background-color: #609CE1;
-    border: 1px solid #091D34;
-    display: none;
-    font-family: 'Roboto Slab', serif;
-    float: left;
-    color: #091D34;
-}
-
-.symbolChoose {
-    border: 1px solid #091D34;
-    width: 40%;
-    height: 45px;
-    text-align: center;
-    vertical-align: middle;
-    float: left;
-    margin-left: 7%;
-    font-size: 40px;
-    line-height: normal;
-    font-family: 'Roboto Slab', serif;
-    color: #091D34;
-}
-
-.symbolChoose:hover {
-    background-color: yellow;
-}
-
-#dialog {
-    width: 200px;
-    height: 125px;
-    font-size: 20px;
-    text-align: center;
-    vertical-align: middle;
-    background-color: #ccc;
-    border: 1px solid #000;
-    display: none;
-    position: absolute;
-    left: 45%;
-    top: 45%;
-    z-index: 100;
-    font-family: 'Roboto Slab', serif;
-    
-}
-
-#main {
-    float: left;
-    
-    /*top: 10%;
-    left: 22vw;*/
-
-    
-    line-height: 60px;
-
-}
-
-header {
-    width: 100%;
-    height: 50px;
-    background-color: #609CE1;
-    float: left;
-    text-align: center;
-    vertical-align: middle;
-    color: #133863;
-    font-family: 'Roboto Slab', serif;
-    font-size: 30px;
-}
-
-#status {
-    color: #133863;
-    font-family: 'Roboto Slab', serif;
-    font-size: 30px;
-}
-
-#rematch {
-    border: 1px solid #091D34;
-    font-size: 20px;
-    line-height: normal;
-    background-color: white;
-    height: 50px;
-}
-
-#rematch:hover {
-    background-color: yellow;
-}
 
 </style>
 
@@ -204,15 +105,15 @@ header {
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const token = "<?php echo session_id();?>";
-    
+    const token = "<?php echo $_SESSION['token'];?>";
+    const login = "<?php echo $_SESSION['login'];?>";
     
 
     setInterval(function() {
        
         var match = urlParams.get('match');
         //console.log("match: " + match);
-        var link = "/server.php?match="+match+"&token="+token;
+        var link = "/server.php?match="+match+"&token="+token+"&login="+login;
         var data = httpGet(link);
         var myObj = JSON.parse(data);
         var board = myObj["board"];
@@ -265,6 +166,9 @@ header {
         } else if (status == "rematchoffered") {
             document.getElementById("rematch").innerHTML = "Click to accept rematch!";
         }
+
+        document.getElementById("p1name").innerHTML = "Player 1: "+myObj["player1name"];
+        document.getElementById("p2name").innerHTML = "Player 2: "+myObj["player2name"];
 
         /*if (status == "redirect") {
             var link = myObj["redirect"];
@@ -356,6 +260,24 @@ header {
         <p id="dialogText">You won!</p>
         <div id="rematch" onclick="rematch()">Challenge opponent to rematch</div>
     </div>
+    
 
+    <table id="matchdata">
+        <tr>
+            <td id="p1name">Connecting...</td>
+            <td id="p2name">Connecting...</td>
+        </tr>
+    </table>
+    <!--
+    <div id="matchdata">
+        <div id="player1">
+            <p id="p1name">Connecting...</p>
+        </div>
+
+        <div id="player2">
+            <p id="p2name">Connecting...</p>
+        </div>
+    </div>
+    -->
 </body>
 </html>
