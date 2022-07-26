@@ -167,8 +167,8 @@ colors:
             document.getElementById("rematch").innerHTML = "Click to accept rematch!";
         }
 
-        document.getElementById("p1name").innerHTML = "Player 1: "+myObj["player1name"];
-        document.getElementById("p2name").innerHTML = "Player 2: "+myObj["player2name"];
+        document.getElementById("p1name").innerHTML = myObj["player1name"];
+        document.getElementById("p2name").innerHTML = myObj["player2name"];
 
         /*if (status == "redirect") {
             var link = myObj["redirect"];
@@ -181,6 +181,13 @@ colors:
             window.location.href = link;
 
         }
+
+        var stats = myObj["stats"];
+        for (const [key, value] of Object.entries(stats)) {
+            console.log(key, value);
+            document.getElementById(key).innerHTML = value;
+        }
+
 
     }, 1000)
 
@@ -265,8 +272,68 @@ colors:
     <table id="matchdata">
         <tr>
             <td id="p1name">Connecting...</td>
+            <td class="mid"> vs </td>
             <td id="p2name">Connecting...</td>
         </tr>
+
+        <tr>
+            <td id="matches1">Connecting...</td>
+            <td class="mid">Matches</td>
+            <td id="matches2">Connecting...</td>
+        </tr>
+
+        <tr>
+            <td id="wins1">Connecting...</td>
+            <td class="mid">Wins</td>
+            <td id="wins2">Connecting...</td>
+        </tr>
+
+        <tr>
+            <td id="loses1">Connecting...</td>
+            <td class="mid">Loses</td>
+            <td id="loses2">Connecting...</td>
+        </tr>
+
+        <tr>
+            <td id="draws1">Connecting...</td>
+            <td class="mid">Draws</td>
+            <td id="draws2">Connecting...</td>
+        </tr>
+
+        <tr>
+            <td id="winp1">Connecting...</td>
+            <td class="mid">Win %</td>
+            <td id="winp2">Connecting...</td>
+        </tr>
+
+        <tr>
+            <td class="statTitle" colspan="3">Matchup Stats</td>
+        </tr>
+
+        <tr>
+            <td id="matchwins1">Connecting...</td>
+            <td class="mid">Wins</td>
+            <td id="matchwins2">Connecting...</td>
+        </tr>
+
+        <tr>
+            <td id="matchloses1">Connecting...</td>
+            <td class="mid">Loses</td>
+            <td id="matchloses2">Connecting...</td>
+        </tr>
+
+        <tr>
+            <td id="matchdraw1">Connecting...</td>
+            <td class="mid">Draws</td>
+            <td id="matchdraw2">Connecting...</td>
+        </tr>
+
+        <tr>
+            <td id="matchwinp1">Connecting...</td>
+            <td class="mid">Win %</td>
+            <td id="matchwinp2">Connecting...</td>
+        </tr>
+
     </table>
     <!--
     <div id="matchdata">

@@ -63,10 +63,6 @@ if (isset($_POST['login']) && isset($_POST['password']) && isset($_POST['passwor
             "password" => hash("sha256", $password),
             "email" => $email,
             "token" => random_str(),
-            "wins" => 0,
-            "losses" => 0,
-            "ties" => 0,
-            "playCount" => 0,
             "vip" => false
         );
 

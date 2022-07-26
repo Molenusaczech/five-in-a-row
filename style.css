@@ -140,18 +140,33 @@ p {
 #matchdata {
     font-size: 20px;
     font-family: 'Roboto Slab', serif;
-    border: 1px solid #091D34;
-    /*background-color: grey;*/
+    /*border: 1px solid #091D34;
+    background-color: grey;*/
+    text-align: right;
 }
 
 td {
     font-family: 'Roboto Slab', serif;
     font-size: 20px;
-    border: 1px solid #091D34;
-    padding: 5px;
+    /*border: 1px solid #091D34;*/
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 #main {
     width: 950px;
     height: 950px;
+}
+
+.mid {
+    font-weight: bold;
+}
+
+.statTitle {
+    font-size: 30px;
+    font-family: 'Roboto Slab', serif;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
 }

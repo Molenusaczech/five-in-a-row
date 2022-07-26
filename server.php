@@ -268,19 +268,65 @@
         $p1symbol = $json_data[$matchid]["p1symbol"];
         $p2symbol = $json_data[$matchid]["p2symbol"];
 
+        $stats = file_get_contents('stats.json');
+        //$stats = Decrypted($stats);
+        $stats = json_decode($stats, true);
+        $player1name = $json_data[$matchid]["player1name"];
+        $player2name = $json_data[$matchid]["player2name"];
+
         if (checkWin($matchid, $p1symbol)) {
             $json_data[$matchid]["status"] = "win1";
             debugLog("player 1 win");
+
+            $stats[$player1name]["wins"] = $stats[$player1name]["wins"] + 1;
+            $stats[$player2name]["losses"] = $stats[$player2name]["losses"] + 1;
+            $stats[$player1name]["plays"] = $stats[$player1name]["plays"] + 1;
+            $stats[$player2name]["plays"] = $stats[$player2name]["plays"] + 1;
+            $stats[$player1name]["matchups"][$player2name]["wins"] = $stats[$player1name]["matchups"][$player2name]["wins"] + 1;
+            $stats[$player2name]["matchups"][$player1name]["losses"] = $stats[$player2name]["matchups"][$player1name]["losses"] + 1;
+            $stats[$player1name]["matchups"][$player2name]["plays"] = $stats[$player1name]["matchups"][$player2name]["plays"] + 1;
+            $stats[$player2name]["matchups"][$player1name]["plays"] = $stats[$player2name]["matchups"][$player1name]["plays"] + 1;
+
         } else if (checkWin($matchid, $p2symbol)) {
             $json_data[$matchid]["status"] = "win2";
             debugLog("player 2 win");
+
+            $stats[$player2name]["wins"] = $stats[$player2name]["wins"] + 1;
+            $stats[$player1name]["losses"] = $stats[$player1name]["losses"] + 1;
+            $stats[$player1name]["plays"] = $stats[$player1name]["plays"] + 1;
+            $stats[$player2name]["plays"] = $stats[$player2name]["plays"] + 1;
+            $stats[$player2name]["matchups"][$player1name]["wins"] = $stats[$player2name]["matchups"][$player1name]["wins"] + 1;
+            $stats[$player1name]["matchups"][$player2name]["losses"] = $stats[$player1name]["matchups"][$player2name]["losses"] + 1;
+            $stats[$player1name]["matchups"][$player2name]["plays"] = $stats[$player1name]["matchups"][$player2name]["plays"] + 1;
+            $stats[$player2name]["matchups"][$player1name]["plays"] = $stats[$player2name]["matchups"][$player1name]["plays"] + 1;
+
         } else if (count($json_data[$matchid]["board"]) == 225) {
             $json_data[$matchid]["status"] = "draw";
             debugLog("draw");
+
+            $stats[$player2name]["draws"] = $stats[$player2name]["draws"] + 1;
+            $stats[$player1name]["draws"] = $stats[$player1name]["draws"] + 1;
+            $stats[$player1name]["plays"] = $stats[$player1name]["plays"] + 1;
+            $stats[$player2name]["plays"] = $stats[$player2name]["plays"] + 1;
+            $stats[$player2name]["matchups"][$player1name]["draws"] = $stats[$player2name]["matchups"][$player1name]["draws"] + 1;
+            $stats[$player1name]["matchups"][$player2name]["draws"] = $stats[$player1name]["matchups"][$player2name]["draws"] + 1;
+            $stats[$player1name]["matchups"][$player2name]["plays"] = $stats[$player1name]["matchups"][$player2name]["plays"] + 1;
+            $stats[$player2name]["matchups"][$player1name]["plays"] = $stats[$player2name]["matchups"][$player1name]["plays"] + 1;
+
         }
         $finalJson = json_encode($json_data);
         $finalJson = Encrypted($finalJson);
         $myfile = fopen("games.json", "w") or die("Unable to open file!");
+
+        fwrite($myfile, $finalJson);
+        fclose($myfile);
+
+
+        //stat file write
+
+        $finalJson = json_encode($stats);
+        //$finalJson = Encrypted($finalJson);
+        $myfile = fopen("stats.json", "w") or die("Unable to open file!");
 
         fwrite($myfile, $finalJson);
         fclose($myfile);
@@ -453,6 +499,102 @@
         if ($match_data["player2name"] == "null") {
             $match_data["player2name"] = "Wating...";
         }
+
+        //Stat handler
+
+        $stats = file_get_contents('stats.json');
+        //$stats = Decrypted($stats);
+        $stats = json_decode($stats, true);
+        $p1name = $match_data["player1name"];
+        $p2name = $match_data["player2name"];
+
+        $match_data["stats"]["matches1"] = $stats[$p1name]["plays"];
+        $match_data["stats"]["matches2"] = $stats[$p2name]["plays"];
+        $match_data["stats"]["wins1"] = $stats[$p1name]["wins"];
+        $match_data["stats"]["wins2"] = $stats[$p2name]["wins"];
+        $match_data["stats"]["loses1"] = $stats[$p1name]["losses"];
+        $match_data["stats"]["loses2"] = $stats[$p2name]["losses"];
+        $match_data["stats"]["draws1"] = $stats[$p1name]["draws"];
+        $match_data["stats"]["draws2"] = $stats[$p2name]["draws"];
+        if ($stats[$p1name]["plays"] != 0) {
+            $match_data["stats"]["winp1"] = $stats[$p1name]["wins"] / $stats[$p1name]["plays"] * 100 . "%";
+        } else {
+            $match_data["stats"]["winp1"] = 0;
+        }
+
+        if ($stats[$p2name]["plays"] != 0) {
+            $match_data["stats"]["winp2"] = $stats[$p2name]["wins"] / $stats[$p2name]["plays"] * 100 . "%";
+        } else {
+            $match_data["stats"]["winp2"] = 0;
+        }
+
+        if (!isset($match_data["stats"]["matches1"])) {
+            $match_data["stats"]["matches1"] = 0;
+        }
+        if (!isset($match_data["stats"]["matches2"])) {
+            $match_data["stats"]["matches2"] = 0;
+        }
+        if (!isset($match_data["stats"]["wins1"])) {
+            $match_data["stats"]["wins1"] = 0;
+        }
+        if (!isset($match_data["stats"]["wins2"])) {
+            $match_data["stats"]["wins2"] = 0;
+        }
+        if (!isset($match_data["stats"]["loses1"])) {
+            $match_data["stats"]["loses1"] = 0;
+        }
+        if (!isset($match_data["stats"]["loses2"])) {
+            $match_data["stats"]["loses2"] = 0;
+        }
+        if (!isset($match_data["stats"]["draws1"])) {
+            $match_data["stats"]["draws1"] = 0;
+        }
+        if (!isset($match_data["stats"]["draws2"])) {
+            $match_data["stats"]["draws2"] = 0;
+        }
+
+        $match_data["stats"]["matchwins1"] = $stats[$p1name]["matchups"][$p2name]["wins"];
+        $match_data["stats"]["matchwins2"] = $stats[$p2name]["matchups"][$p1name]["wins"];
+        $match_data["stats"]["matchloses1"] = $stats[$p1name]["matchups"][$p2name]["losses"];
+        $match_data["stats"]["matchloses2"] = $stats[$p2name]["matchups"][$p1name]["losses"];
+        $match_data["stats"]["matchdraw1"] = $stats[$p1name]["matchups"][$p2name]["draws"];
+        $match_data["stats"]["matchdraw2"] = $stats[$p2name]["matchups"][$p1name]["draws"];
+        if ($stats[$p1name]["matchups"][$p2name]["plays"] != 0) {
+            $match_data["stats"]["matchwinp1"] = $stats[$p1name]["matchups"][$p2name]["wins"] / $stats[$p1name]["matchups"][$p2name]["plays"] * 100 . "%";
+        } else {
+            $match_data["stats"]["matchwinp1"] = 0;
+        }
+
+        if ($stats[$p2name]["matchups"][$p1name]["plays"] != 0) {
+            $match_data["stats"]["matchwinp2"] = $stats[$p2name]["matchups"][$p1name]["wins"] / $stats[$p2name]["matchups"][$p1name]["plays"] * 100 . "%";
+        } else {
+            $match_data["stats"]["matchwinp2"] = 0;
+        }
+
+        if (!isset($match_data["stats"]["matchwins1"])) {
+            $match_data["stats"]["matchwins1"] = 0;
+        }
+
+        if (!isset($match_data["stats"]["matchwins2"])) {
+            $match_data["stats"]["matchwins2"] = 0;
+        }
+
+        if (!isset($match_data["stats"]["matchloses1"])) {
+            $match_data["stats"]["matchloses1"] = 0;
+        }
+
+        if (!isset($match_data["stats"]["matchloses2"])) {
+            $match_data["stats"]["matchloses2"] = 0;
+        }
+
+        if (!isset($match_data["stats"]["matchdraw1"])) {
+            $match_data["stats"]["matchdraw1"] = 0;
+        }
+
+        if (!isset($match_data["stats"]["matchdraw2"])) {
+            $match_data["stats"]["matchdraw2"] = 0;
+        }
+
     
         $final_data = json_encode($match_data);
         echo $final_data;
