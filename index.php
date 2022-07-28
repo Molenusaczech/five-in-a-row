@@ -1,9 +1,70 @@
 <?php 
-session_start();
+//session_start();
 error_reporting(0);
 
+function Encrypted($text) {
+    $key = getenv('key');
+    $string = $text;
+    $pass = $key;
+    $method = 'aes128';
+    return openssl_encrypt($string, $method, $pass);
+
+}
+
+function Decrypted($text) {
+    $key = getenv('key');
+    $string = $text;
+    $pass = $key;
+    $method = 'aes128';
+    return openssl_decrypt($string, $method, $pass);
+}
+
+function sessionGet($token, $key) {
+    $sessiondata = file_get_contents("sessions.json");
+    $sessiondata = Decrypted($sessiondata);
+    $sessiondata = json_decode($sessiondata, true);
+    if (isset($sessiondata[$token][$key])) {
+        return $sessiondata[$token][$key];
+    } else {
+        return null;
+    }
+    //return $sessiondata[$token][$key];
+}
+
+function sessionSet($token, $key, $value) {
+    $sessiondata = file_get_contents("sessions.json");
+    $sessiondata = Decrypted($sessiondata);
+    $sessiondata = json_decode($sessiondata, true);
+    $sessiondata[$token][$key] = $value;
+    //$sessiondata = json_encode($sessiondata);
+    //$sessiondata = Encrypted($sessiondata);
+    //file_put_contents("sessions.json", $sessiondata);
+
+    $finalJson = json_encode($sessiondata);
+    $finalJson = Encrypted($finalJson);
+    $myfile = fopen("sessions.json", "w") or die("Unable to open file!");
+
+    fwrite($myfile, $finalJson);
+    fclose($myfile);
+}
+/*
 if (!isset($_SESSION['token'])) {
     $_SESSION['token'] = session_id();   
+}*/
+
+function random_str(
+    int $length = 64,
+    string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+): string {
+    if ($length < 1) {
+        throw new \RangeException("Length must be a positive integer");
+    }
+    $pieces = [];
+    $max = strlen($keyspace) - 1;
+    for ($i = 0; $i < $length; ++$i) {
+        $pieces []= $keyspace[random_int(0, $max)];
+    }
+    return implode('', $pieces);
 }
 
 function randomName() {
@@ -13,9 +74,26 @@ function randomName() {
     return $adjectives[rand(0, count($adjectives) - 1)] . $names[rand(0, count($names) - 1)] . $randomNumber;
 }
 
-
+/*
 if (!isset($_SESSION['login'])) {
     $_SESSION['login'] = randomName();   
+}*/
+
+if (!isset($_COOKIE["token"])) {
+    $random = random_str();
+    setcookie("token", $random, time() + (86400 * 30), "/");
+    $cookie = $random;
+} else {
+    $cookie = $_COOKIE["token"];
+}
+
+if (sessionGet($cookie, "token") == null) {
+    sessionSet($cookie, "token", $cookie); 
+}
+
+if (sessionGet($cookie, "login") == null) {
+    //$_SESSION['login'] = randomName();   
+    sessionSet($cookie, "login", randomName());
 }
 ?>
 
@@ -43,10 +121,10 @@ body {
     <header>Mole's Five-In-Row</header>
 
     <?php 
-    if ($_SESSION["authed"] == true) {
-        echo "<p class='authed'>You are logged in as " . $_SESSION["login"] . " <a href='logout.php'>Logout</a></p> ";
+    if (sessionGet($cookie, "authed") == true) {
+        echo "<p class='authed'>You are logged in as " . sessionGet($cookie, "login") . " <a href='logout.php'>Logout</a></p> ";
     } else {
-        echo "<p class='authed'>You are not logged in (Guest Username: ".$_SESSION['login'].") <a href='login.php'>Login</a></p>";
+        echo "<p class='authed'>You are not logged in (Guest Username: ".sessionGet($cookie, "login").") <a href='login.php'>Login</a></p>";
     }
     ?>
 

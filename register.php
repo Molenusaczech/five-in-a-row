@@ -1,6 +1,6 @@
 <?php 
 error_reporting(0);
-session_start();
+//session_start();
 
 function Encrypted($text) {
     $key = getenv('key');
@@ -34,7 +34,49 @@ function random_str(
     return implode('', $pieces);
 }
 
-if($_SESSION['authed'] == true) {
+function sessionGet($token, $key) {
+    $sessiondata = file_get_contents("sessions.json");
+    $sessiondata = Decrypted($sessiondata);
+    $sessiondata = json_decode($sessiondata, true);
+    if (isset($sessiondata[$token][$key])) {
+        return $sessiondata[$token][$key];
+    } else {
+        return null;
+    }
+    //return $sessiondata[$token][$key];
+}
+
+function sessionSet($token, $key, $value) {
+    $sessiondata = file_get_contents("sessions.json");
+    $sessiondata = Decrypted($sessiondata);
+    $sessiondata = json_decode($sessiondata, true);
+    $sessiondata[$token][$key] = $value;
+    //$sessiondata = json_encode($sessiondata);
+    // $sessiondata = Encrypted($sessiondata);
+    //file_put_contents("sessions.json", $sessiondata);
+
+    $finalJson = json_encode($sessiondata);
+    $finalJson = Encrypted($finalJson);
+    $myfile = fopen("sessions.json", "w") or die("Unable to open file!");
+
+    fwrite($myfile, $finalJson);
+    fclose($myfile);
+}
+
+if (!isset($_COOKIE["token"])) {
+    $random = random_str();
+    setcookie("token", $random, time() + (86400 * 30), "/");
+    $cookie = $random;
+} else {
+    $cookie = $_COOKIE["token"];
+}
+
+if (sessionGet($cookie, "token") == null) {
+    sessionSet($cookie, "token", $cookie); 
+}
+
+
+if(sessionGet($cookie, "authed") == true) {
     header("Location: index.php");
     die();
 }
@@ -66,9 +108,13 @@ if (isset($_POST['login']) && isset($_POST['password']) && isset($_POST['passwor
             "vip" => false
         );
 
-        $_SESSION['login'] = $login;
+        /*$_SESSION['login'] = $login;
         $_SESSION['authed'] = true;
-        $_SESSION['token'] = $decoded[$login]['token'];
+        $_SESSION['token'] = $decoded[$login]['token'];*/
+
+        sessionSet($cookie, "login", $login);
+        sessionSet($cookie, "authed", true);
+        sessionSet($cookie, "token", $decoded[$login]['token']);
 
         $finalJson = json_encode($decoded);
         $finalJson = Encrypted($finalJson);

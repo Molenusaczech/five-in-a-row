@@ -1,8 +1,63 @@
 <?php 
 
+
+function sessionGet($token, $key) {
+    $sessiondata = file_get_contents("sessions.json");
+    $sessiondata = Decrypted($sessiondata);
+    $sessiondata = json_decode($sessiondata, true);
+    if (isset($sessiondata[$token][$key])) {
+        return $sessiondata[$token][$key];
+    } else {
+        return null;
+    }
+    //return $sessiondata[$token][$key];
+}
+
+function sessionSet($token, $key, $value) {
+    $sessiondata = file_get_contents("sessions.json");
+    $sessiondata = Decrypted($sessiondata);
+    $sessiondata = json_decode($sessiondata, true);
+    $sessiondata[$token][$key] = $value;
+    $finalJson = json_encode($sessiondata);
+    $finalJson = Encrypted($finalJson);
+    $myfile = fopen("sessions.json", "w") or die("Unable to open file!");
+
+    fwrite($myfile, $finalJson);
+    fclose($myfile);
+}
+
+function random_str(
+    int $length = 64,
+    string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+): string {
+    if ($length < 1) {
+        throw new \RangeException("Length must be a positive integer");
+    }
+    $pieces = [];
+    $max = strlen($keyspace) - 1;
+    for ($i = 0; $i < $length; ++$i) {
+        $pieces []= $keyspace[random_int(0, $max)];
+    }
+    return implode('', $pieces);
+}
+/*
 if (!isset($_SESSION['token'])) {
     $_SESSION['token'] = session_id();   
+}*/
+
+if (!isset($_COOKIE["token"])) {
+    $random = random_str();
+    setcookie("token", $random, time() + (86400 * 30), "/");
+    $cookie = $random;
+} else {
+    $cookie = $_COOKIE["token"];
 }
+
+if (sessionGet($cookie, "token") == null) {
+    sessionSet($cookie, "token", $cookie); 
+}
+
+
 error_reporting(0);
 function Encrypted($text) {
     $key = getenv('key');
@@ -31,9 +86,11 @@ function generateRandomString($length = 10) {
     return $randomString;
 }
 
-session_start();
+//session_start();
 
-$userToken = $_SESSION['token'];
+
+$userToken = sessionGet($cookie, "token");
+$userName = sessionGet($cookie, "login");
 $matchid = generateRandomString(16);
 
 $json_data = file_get_contents('games.json');
@@ -41,7 +98,7 @@ $json_data = Decrypted($json_data);
 $decoded = json_decode($json_data, true);
 
 $decoded[$matchid]["player1"] = $userToken;
-$decoded[$matchid]["player1name"] = $_SESSION['login'];
+$decoded[$matchid]["player1name"] = $userName;
 $decoded[$matchid]["player2"] = "null";
 $decoded[$matchid]["player2name"] = "null";
 $decoded[$matchid]["status"] = "waiting";
