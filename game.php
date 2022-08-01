@@ -88,6 +88,14 @@ function Decrypted($text) {
     return openssl_decrypt($string, $method, $pass);
 }
 
+function _bot_detected() {
+
+    return (
+      isset($_SERVER['HTTP_USER_AGENT'])
+      && preg_match('/bot|crawl|slurp|spider|mediapartners/i', $_SERVER['HTTP_USER_AGENT'])
+    );
+  }
+
 if ($_GET["match"] == "" or $_GET["match"] == null) {
     header("Location: index.php");
     die();
@@ -101,7 +109,7 @@ $decoded = json_decode($json_data, true);
 $token = sessionGet($cookie, "token");
 $login = sessionGet($cookie, "login");
 
-if ($decoded[$_GET["match"]]["player2"] == "null" && $token !== $decoded[$_GET["match"]]["player1"])  {
+if ($decoded[$_GET["match"]]["player2"] == "null" && $token !== $decoded[$_GET["match"]]["player1"] && !_bot_detected()) {
     $decoded[$_GET["match"]]["player2"] = $token;
     $decoded[$_GET["match"]]["player2name"] = $login;
     $decoded[$_GET["match"]]["status"] = "swap1"; 
@@ -224,6 +232,10 @@ colors:
 
         document.getElementById("p1name").innerHTML = myObj["player1name"];
         document.getElementById("p2name").innerHTML = myObj["player2name"];
+        document.getElementById("p1name").href = "/profile.php?user="+myObj["player1name"];
+        if (myObj["player2name"] !== "Waiting...") {
+            document.getElementById("p2name").href = "/profile.php?user="+myObj["player2name"];
+        } 
 
         /*if (status == "redirect") {
             var link = myObj["redirect"];
@@ -326,9 +338,9 @@ colors:
 
     <table id="matchdata">
         <tr>
-            <td id="p1name">Connecting...</td>
+            <td><a id="p1name" target="_blank">Connecting...</a></td>
             <td class="mid"> vs </td>
-            <td id="p2name">Connecting...</td>
+            <td><a id="p2name" target="_blank">Connecting...</a></td>
         </tr>
 
         <tr>

@@ -170,3 +170,9 @@ td {
     text-align: center;
     vertical-align: middle;
 }
+
+#stats {
+    width: 50%;
+    height: 100%;
+    float: left;
+}

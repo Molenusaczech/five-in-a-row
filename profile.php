@@ -1,7 +1,5 @@
 <?php 
-//session_start();
 error_reporting(0);
-
 function Encrypted($text) {
     $key = getenv('key');
     $string = $text;
@@ -95,6 +93,21 @@ if (sessionGet($cookie, "login") == null) {
     //$_SESSION['login'] = randomName();   
     sessionSet($cookie, "login", randomName());
 }
+
+$stats = file_get_contents("stats.json");
+$stats = json_decode($stats, true);
+
+if ($_GET["user"] == "" || $_GET["user"] == null || !isset($stats[$_GET["user"]])) {
+    if (sessionGet($cookie, "login") == null) {
+        header("Location: index.php");
+        die();
+    } else {
+        $user = sessionGet($cookie, "login");
+    }
+} else {
+    $user = $_GET["user"];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -108,28 +121,95 @@ if (sessionGet($cookie, "login") == null) {
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
     <title>Mole's Five-In-a-Row</title>
     <link rel="stylesheet" href="style.css">
-
-<style>
-body {
-    line-height: 30px;
-}
-</style>
-
 </head>
-
 <body>
     <header>Mole's Five-In-Row</header>
-
-    <?php 
-    if (sessionGet($cookie, "authed") == true) {
-        echo "<p class='authed'>You are logged in as <a href='profile.php'> " . sessionGet($cookie, "login") . "</a> <a href='logout.php'>Logout</a></p> ";
+    <div id="stats">
+    <h1><?php echo $user; ?> - User Profile<h1>
+    <p> Played Matches: <?php 
+    if (isset($stats[$user]["plays"])) {
+        echo $stats[$user]["plays"]; 
     } else {
-        echo "<p class='authed'>You are not logged in (Guest Username: ".sessionGet($cookie, "login").") <a href='login.php'>Login</a></p>";
+        echo "0";
     }
-    ?>
+    ?></p>
+    <p> Wins: <?php 
+    if (isset($stats[$user]["wins"])) {
+        echo $stats[$user]["wins"]; 
+    } else {
+        echo "0";
+    }
+    ?></p>
+    <p> Losses: <?php 
+    if (isset($stats[$user]["losses"])) {
+        echo $stats[$user]["losses"]; 
+    } else {
+        echo "0";
+    }
+    ?></p>
+    <p> Draws: <?php 
+    if (isset($stats[$user]["draws"])) {
+        echo $stats[$user]["draws"]; 
+    } else {
+        echo "0";
+    }
+    ?></p>
+    <p> Winrate: <?php
+    
+        if ($stats[$user]["plays"] == 0) {
+            echo "0%";
+        } else {
+            echo round(($stats[$user]["wins"] / $stats[$user]["plays"]) * 100, 2);
+        }
+    
+    
+    ?>%</p>
 
-    <p>Click to create a private game, send your friend a link!</p>
-    <a class="hrefbutton" href="creategame.php">Create Game</a>
+    <h2> Matchup stats </h2>
+    <table>
+
+        <tr>
+            <th>Opponent</th>
+            <th>Wins</th>
+            <th>Losses</th>
+            <th>Draws</th>
+            <th>Winrate</th>
+        </tr>
+        <?php
+        $userMatchups = $stats[$user]["matchups"];
+        foreach ($userMatchups as $key => $value) {
+           
+                echo "<tr>";
+                echo "<td><a href=/profile.php?user=" . $key . ">" . $key . "</a></td>";
+                if (!isset($value["wins"])) {
+                    echo "<td>0</td>";
+                } else {
+                    echo "<td>" . $value["wins"] . "</td>";
+                }
+                if (!isset($value["losses"])) {
+                    echo "<td>0</td>";
+                } else {
+                    echo "<td>" . $value["losses"] . "</td>";
+                }
+                
+                if (!isset($value["draws"])) {
+                    echo "<td>0</td>";
+                } else {
+                    echo "<td>" . $value["draws"] . "</td>";
+                }
+
+                echo "<td>" . round($value["wins"] / $value["plays"] * 100, 2) . "%</td>";
+                echo "</tr>";
+            
+        }
+        ?>
+
+    </table>
+</div>
+
+Achievments:
+Coming soon
+
 </body>
 
 </html>

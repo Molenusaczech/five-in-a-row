@@ -497,7 +497,7 @@
         unset($match_data["player2"]);
         
         if ($match_data["player2name"] == "null") {
-            $match_data["player2name"] = "Wating...";
+            $match_data["player2name"] = "Waiting...";
         }
 
         //Stat handler
@@ -517,13 +517,13 @@
         $match_data["stats"]["draws1"] = $stats[$p1name]["draws"];
         $match_data["stats"]["draws2"] = $stats[$p2name]["draws"];
         if ($stats[$p1name]["plays"] != 0) {
-            $match_data["stats"]["winp1"] = $stats[$p1name]["wins"] / $stats[$p1name]["plays"] * 100 . "%";
+            $match_data["stats"]["winp1"] = round($stats[$p1name]["wins"] / $stats[$p1name]["plays"] * 100, 2) . "%";
         } else {
             $match_data["stats"]["winp1"] = 0;
         }
 
         if ($stats[$p2name]["plays"] != 0) {
-            $match_data["stats"]["winp2"] = $stats[$p2name]["wins"] / $stats[$p2name]["plays"] * 100 . "%";
+            $match_data["stats"]["winp2"] = round($stats[$p2name]["wins"] / $stats[$p2name]["plays"] * 100, 2) . "%";
         } else {
             $match_data["stats"]["winp2"] = 0;
         }
