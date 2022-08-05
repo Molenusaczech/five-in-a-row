@@ -9,8 +9,8 @@ body {
 }
 
 .field {
-    width: 60px;
-    height: 60px;
+    width: 6vmin;
+    height: 6vmin;
     background-color: #E1ECF9;
     border: 1px solid #091D34;
     float: left;
@@ -82,7 +82,7 @@ body {
     left: 22vw;*/
 
     
-    line-height: 60px;
+    line-height: 6vmin;
 
 }
 
@@ -154,10 +154,7 @@ td {
     vertical-align: middle;
 }
 
-#main {
-    width: 950px;
-    height: 950px;
-}
+
 
 .mid {
     font-weight: bold;
