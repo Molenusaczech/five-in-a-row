@@ -27,6 +27,11 @@
         fclose($myfile);
     }
 
+    function getLangText($id, $lang) {
+        $text = file_get_contents("lang/$lang.json");
+        $text = json_decode($text, true);
+        return $text[$id];
+    }
 
     function checkWin($matchid, $symbol) {
         $json_data = file_get_contents('games.json');
@@ -139,11 +144,11 @@
 
     function createRematch($p1id, $p2id, $p1name, $p2name) {
         $newmatchid = generateRandomString(16);
-        debugLog("createRematch matchid: $newmatchid");
+        //debugLog("createRematch matchid: $newmatchid");
 
         $json_data = file_get_contents('games.json');
         $json_data = Decrypted($json_data);
-        debugLog("createRematch json1: $json_data");
+        //debugLog("createRematch json1: $json_data");
         $decoded = json_decode($json_data, true);
         
 
@@ -158,7 +163,7 @@
         
 
         $finalJson = json_encode($decoded);
-        debugLog("createRematch json2: $finalJson");
+        //debugLog("createRematch json2: $finalJson");
         $finalJson = Encrypted($finalJson);
         $myfile = fopen("games.json", "w") or die("Unable to open file!");
 
@@ -172,6 +177,8 @@
     $matchid = $_GET["match"];
     $token = $_GET["token"];
     $login = $_GET["login"];
+    $lang = $_GET["lang"];
+
     $json_data = file_get_contents('games.json');
     $json_data = Decrypted($json_data);
     $json_data = json_decode($json_data, true);
@@ -276,7 +283,7 @@
 
         if (checkWin($matchid, $p1symbol)) {
             $json_data[$matchid]["status"] = "win1";
-            debugLog("player 1 win");
+            //debugLog("player 1 win");
 
             $stats[$player1name]["wins"] = $stats[$player1name]["wins"] + 1;
             $stats[$player2name]["losses"] = $stats[$player2name]["losses"] + 1;
@@ -289,7 +296,7 @@
 
         } else if (checkWin($matchid, $p2symbol)) {
             $json_data[$matchid]["status"] = "win2";
-            debugLog("player 2 win");
+            //debugLog("player 2 win");
 
             $stats[$player2name]["wins"] = $stats[$player2name]["wins"] + 1;
             $stats[$player1name]["losses"] = $stats[$player1name]["losses"] + 1;
@@ -302,7 +309,7 @@
 
         } else if (count($json_data[$matchid]["board"]) == 225) {
             $json_data[$matchid]["status"] = "draw";
-            debugLog("draw");
+            //debugLog("draw");
 
             $stats[$player2name]["draws"] = $stats[$player2name]["draws"] + 1;
             $stats[$player1name]["draws"] = $stats[$player1name]["draws"] + 1;
@@ -391,7 +398,7 @@
 
             $json_data = file_get_contents('games.json');
             $json_data = Decrypted($json_data);
-            debugLog("createRematch json1: $json_data");
+            //debugLog("createRematch json1: $json_data");
             $json_data = json_decode($json_data, true);
 
             $json_data[$matchid]["status"] = "redirect";
@@ -450,46 +457,46 @@
         }
 
         if ($status == "waiting") {
-            $match_data["userStatus"] = "Waiting for opponent to join";
+            $match_data["userStatus"] = getLangText("waitingForOpponentToJoin", $lang);
         } else if ($status == "turn1") {
             if ($player == 1) {
-                $match_data["userStatus"] = "Your turn";
+                $match_data["userStatus"] = getLangText("yourTurn", $lang);
             } else if ($player == 2) {
-                $match_data["userStatus"] = "Opponent's turn";
+                $match_data["userStatus"] = getLangText("opponentTurn", $lang);
             }
         } else if ($status == "turn2") {
             if ($player == 2) {
-                $match_data["userStatus"] = "Your turn";
+                $match_data["userStatus"] = getLangText("yourTurn", $lang);
             } else if ($player == 1) {
-                $match_data["userStatus"] = "Opponent's turn";
+                $match_data["userStatus"] = getLangText("opponentTurn", $lang);
             }
         } else if ($status == "swap1") {
             if ($player == 1) {
-                $match_data["userStatus"] = "Place your first SWAP symbol (X)";
+                $match_data["userStatus"] = getLangText("swap1", $lang);
             } else if ($player == 2) {
-                $match_data["userStatus"] = "Wait for your opponent to finish SWAP";
+                $match_data["userStatus"] = getLangText("waitingForSwap", $lang);
             }
         } else if ($status == "swap2") {
             if ($player == 1) {
-                $match_data["userStatus"] = "Place your second SWAP symbol (O)";
+                $match_data["userStatus"] = getLangText("swap2", $lang);
             } else if ($player == 2) {
-                $match_data["userStatus"] = "Wait for your opponent to finish SWAP";
+                $match_data["userStatus"] = getLangText("waitingForSwap", $lang);
             }
         } else if ($status == "swap3") {
             if ($player == 1) {
-                $match_data["userStatus"] = "Place your third (and last) SWAP symbol (X)";
+                $match_data["userStatus"] = getLangText("swap3", $lang);
             } else if ($player == 2) {
-                $match_data["userStatus"] = "Wait for your opponent to finish SWAP";
+                $match_data["userStatus"] = getLangText("waitingForSwap", $lang);
             }
         } else if ($status == "choose") {
             if ($player == 1) {
-                $match_data["userStatus"] = "Wait for your opponent to choose a symbol";
+                $match_data["userStatus"] = getLangText("waitForChoose", $lang);
             } else if ($player == 2) {
                 $match_data["userStatus"] = "";
             }
         } else if ($status == "win1" || $status == "win2" || $status == "draw") {
             
-            $match_data["userStatus"] = "Match has ended";
+            $match_data["userStatus"] = getLangText("matchEnded", $lang);
             
         } 
 
@@ -497,7 +504,7 @@
         unset($match_data["player2"]);
         
         if ($match_data["player2name"] == "null") {
-            $match_data["player2name"] = "Waiting...";
+            $match_data["player2name"] = getLangText("waiting", $lang);
         }
 
         //Stat handler

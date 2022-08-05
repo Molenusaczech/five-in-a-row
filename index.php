@@ -74,6 +74,12 @@ function randomName() {
     return $adjectives[rand(0, count($adjectives) - 1)] . $names[rand(0, count($names) - 1)] . $randomNumber;
 }
 
+function getLangText($id, $lang) {
+    $text = file_get_contents("lang/$lang.json");
+    $text = json_decode($text, true);
+    return $text[$id];
+}
+
 /*
 if (!isset($_SESSION['login'])) {
     $_SESSION['login'] = randomName();   
@@ -95,6 +101,12 @@ if (sessionGet($cookie, "login") == null) {
     //$_SESSION['login'] = randomName();   
     sessionSet($cookie, "login", randomName());
 }
+
+if (sessionGet($cookie, "lang") == null) {
+    header("Location: launguage.php");
+    die();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -118,18 +130,18 @@ body {
 </head>
 
 <body>
-    <header>Mole's Five-In-Row</header>
+    <header><?php echo getLangText("name", sessionGet($cookie, "lang"))?></header>
 
     <?php 
     if (sessionGet($cookie, "authed") == true) {
-        echo "<p class='authed'>You are logged in as <a href='profile.php'> " . sessionGet($cookie, "login") . "</a> <a href='logout.php'>Logout</a></p> ";
+        echo "<p class='authed'>". getLangText("loggedIn", sessionGet($cookie, "lang")) ."<a href='profile.php'> " . sessionGet($cookie, "login") . "</a> <a href='logout.php'>". getLangText("logout", sessionGet($cookie, "lang")) ."</a></p> ";
     } else {
-        echo "<p class='authed'>You are not logged in (Guest Username: ".sessionGet($cookie, "login").") <a href='login.php'>Login</a></p>";
+        echo "<p class='authed'>". getLangText("loggedOut", sessionGet($cookie, "lang")) .sessionGet($cookie, "login").") <a href='login.php'>". getLangText("login", sessionGet($cookie, "lang")) ."</a></p>";
     }
     ?>
 
-    <p>Click to create a private game, send your friend a link!</p>
-    <a class="hrefbutton" href="creategame.php">Create Game</a>
+    <p><?php echo getLangText("createGameLabel", sessionGet($cookie, "lang"))?></p>
+    <a class="hrefbutton" href="creategame.php"><?php echo getLangText("createGame", sessionGet($cookie, "lang"))?></a>
 </body>
 
 </html>

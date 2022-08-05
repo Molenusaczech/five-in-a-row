@@ -94,7 +94,13 @@ function _bot_detected() {
       isset($_SERVER['HTTP_USER_AGENT'])
       && preg_match('/bot|crawl|slurp|spider|mediapartners/i', $_SERVER['HTTP_USER_AGENT'])
     );
-  }
+}
+
+function getLangText($id, $lang) {
+    $text = file_get_contents("lang/$lang.json");
+    $text = json_decode($text, true);
+    return $text[$id];
+}
 
 if ($_GET["match"] == "" or $_GET["match"] == null) {
     header("Location: index.php");
@@ -120,6 +126,11 @@ if ($decoded[$_GET["match"]]["player2"] == "null" && $token !== $decoded[$_GET["
 
     fwrite($myfile, $finalJson);
     fclose($myfile);
+}
+
+if (sessionGet($cookie, "lang") == null) {
+    header("Location: launguage.php?match=" . $_GET["match"]);
+    die();
 }
 
 /* 
@@ -176,7 +187,7 @@ colors:
        
         var match = urlParams.get('match');
         //console.log("match: " + match);
-        var link = "/server.php?match="+match+"&token="+token+"&login="+login;
+        var link = "/server.php?match="+match+"&token="+token+"&login="+login+"&lang="+"<?php echo sessionGet($cookie, "lang");?>";
         var data = httpGet(link);
         var myObj = JSON.parse(data);
         var board = myObj["board"];
@@ -209,15 +220,15 @@ colors:
         if (status == "win") {
             console.log("win");
             document.getElementById("dialog").style.display = "block";
-            document.getElementById("dialogText").innerHTML = "You win!";
+            document.getElementById("dialogText").innerHTML = "<?php echo getLangText("youWon", sessionGet($cookie, "lang"))?>";
         } else if (status == "draw") {
             console.log("draw");
             document.getElementById("dialog").style.display = "block";
-            document.getElementById("dialogText").innerHTML = "Draw!";
+            document.getElementById("dialogText").innerHTML = "<?php echo getLangText("draw", sessionGet($cookie, "lang"))?>";
         } else if (status == "lose") {
             console.log("lose");
             document.getElementById("dialog").style.display = "block";
-            document.getElementById("dialogText").innerHTML = "You lose!";
+            document.getElementById("dialogText").innerHTML = "<?php echo getLangText("youLost", sessionGet($cookie, "lang"))?>";
         } else if (status == "rematchoffered" || status == "waitingforrematch") {
             document.getElementById("dialog").style.display = "block";
         } else {
@@ -225,15 +236,15 @@ colors:
         }
 
         if (status == "waitingforrematch") {
-            document.getElementById("rematch").innerHTML = "Waiting for rematch!";
+            document.getElementById("rematch").innerHTML = "<?php echo getLangText("waitingForAccept", sessionGet($cookie, "lang"))?>";
         } else if (status == "rematchoffered") {
-            document.getElementById("rematch").innerHTML = "Click to accept rematch!";
+            document.getElementById("rematch").innerHTML = "<?php echo getLangText("acceptRematch", sessionGet($cookie, "lang"))?>";
         }
 
         document.getElementById("p1name").innerHTML = myObj["player1name"];
         document.getElementById("p2name").innerHTML = myObj["player2name"];
         document.getElementById("p1name").href = "/profile.php?user="+myObj["player1name"];
-        if (myObj["player2name"] !== "Waiting...") {
+        if (myObj["player2name"] !== "<?php echo getLangText("waiting", sessionGet($cookie, "lang"))?>") {
             document.getElementById("p2name").href = "/profile.php?user="+myObj["player2name"];
         } 
 
@@ -266,12 +277,12 @@ colors:
         var data = httpGet(link);
         var myObj = JSON.parse(data);
         var board = myObj["board"];
-        
+        /*
         console.log(board);
         for (const [key, value] of Object.entries(board)) {
             console.log(key, value);
             document.getElementById(key).innerHTML = value;
-        }
+        }*/
 
     }
 
@@ -301,7 +312,7 @@ colors:
 
     </script>
 
-    <header>Mole's Five-In-Row</header>
+    <header><?php echo getLangText("name", sessionGet($cookie, "lang"))?></header>
 
     <div id="main">
     <?php 
@@ -323,82 +334,82 @@ colors:
     ?>
     </div>
 
-    <p id="status">Connecting</p>
+    <p id="status"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></p>
     <div id="choose">
-        Choose your symbol:
+        <?php echo getLangText("chooseYourSymbol", sessionGet($cookie, "lang"))?>
         <div class="symbolChoose" onclick="chooseSymbol('x')"> X </div>
         <div class="symbolChoose" onclick="chooseSymbol('o')"> O </div>
     </div>
 
     <div id="dialog">
-        <p id="dialogText">You won!</p>
-        <div id="rematch" onclick="rematch()">Challenge opponent to rematch</div>
+        <p id="dialogText"><?php echo getLangText("youWon", sessionGet($cookie, "lang"))?></p>
+        <div id="rematch" onclick="rematch()"><?php echo getLangText("challengeOpponentToRematch", sessionGet($cookie, "lang"))?></div>
     </div>
     
 
     <table id="matchdata">
         <tr>
-            <td><a id="p1name" target="_blank">Connecting...</a></td>
+            <td><a id="p1name" target="_blank"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></a></td>
             <td class="mid"> vs </td>
-            <td><a id="p2name" target="_blank">Connecting...</a></td>
+            <td><a id="p2name" target="_blank"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></a></td>
         </tr>
 
         <tr>
-            <td id="matches1">Connecting...</td>
-            <td class="mid">Matches</td>
-            <td id="matches2">Connecting...</td>
+            <td id="matches1"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
+            <td class="mid"><?php echo getLangText("matches", sessionGet($cookie, "lang"))?></td>
+            <td id="matches2"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
         </tr>
 
         <tr>
-            <td id="wins1">Connecting...</td>
-            <td class="mid">Wins</td>
-            <td id="wins2">Connecting...</td>
+            <td id="wins1"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
+            <td class="mid"><?php echo getLangText("wins", sessionGet($cookie, "lang"))?></td>
+            <td id="wins2"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
         </tr>
 
         <tr>
-            <td id="loses1">Connecting...</td>
-            <td class="mid">Loses</td>
-            <td id="loses2">Connecting...</td>
+            <td id="loses1"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
+            <td class="mid"><?php echo getLangText("losses", sessionGet($cookie, "lang"))?></td>
+            <td id="loses2"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
         </tr>
 
         <tr>
-            <td id="draws1">Connecting...</td>
-            <td class="mid">Draws</td>
-            <td id="draws2">Connecting...</td>
+            <td id="draws1"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
+            <td class="mid"><?php echo getLangText("draws", sessionGet($cookie, "lang"))?></td>
+            <td id="draws2"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
         </tr>
 
         <tr>
-            <td id="winp1">Connecting...</td>
-            <td class="mid">Win %</td>
-            <td id="winp2">Connecting...</td>
+            <td id="winp1"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
+            <td class="mid"><?php echo getLangText("winPercent", sessionGet($cookie, "lang"))?></td>
+            <td id="winp2"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
         </tr>
 
         <tr>
-            <td class="statTitle" colspan="3">Matchup Stats</td>
+            <td class="statTitle" colspan="3"><?php echo getLangText("matchupStats", sessionGet($cookie, "lang"))?></td>
         </tr>
 
         <tr>
-            <td id="matchwins1">Connecting...</td>
-            <td class="mid">Wins</td>
-            <td id="matchwins2">Connecting...</td>
+            <td id="matchwins1"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
+            <td class="mid"><?php echo getLangText("wins", sessionGet($cookie, "lang"))?></td>
+            <td id="matchwins2"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
         </tr>
 
         <tr>
-            <td id="matchloses1">Connecting...</td>
-            <td class="mid">Loses</td>
-            <td id="matchloses2">Connecting...</td>
+            <td id="matchloses1"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
+            <td class="mid"><?php echo getLangText("losses", sessionGet($cookie, "lang"))?></td>
+            <td id="matchloses2"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
         </tr>
 
         <tr>
-            <td id="matchdraw1">Connecting...</td>
-            <td class="mid">Draws</td>
-            <td id="matchdraw2">Connecting...</td>
+            <td id="matchdraw1"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
+            <td class="mid"><?php echo getLangText("draws", sessionGet($cookie, "lang"))?></td>
+            <td id="matchdraw2"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
         </tr>
 
         <tr>
-            <td id="matchwinp1">Connecting...</td>
-            <td class="mid">Win %</td>
-            <td id="matchwinp2">Connecting...</td>
+            <td id="matchwinp1"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
+            <td class="mid"><?php echo getLangText("winPercent", sessionGet($cookie, "lang"))?></td>
+            <td id="matchwinp2"><?php echo getLangText("connecting", sessionGet($cookie, "lang"))?></td>
         </tr>
 
     </table>

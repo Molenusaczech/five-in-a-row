@@ -63,6 +63,12 @@ function sessionSet($token, $key, $value) {
     fclose($myfile);
 }
 
+function getLangText($id, $lang) {
+    $text = file_get_contents("lang/$lang.json");
+    $text = json_decode($text, true);
+    return $text[$id];
+}
+
 if (!isset($_COOKIE["token"])) {
     $random = random_str();
     setcookie("token", $random, time() + (86400 * 30), "/");
@@ -81,6 +87,11 @@ if(sessionGet($cookie, "authed") == true) {
     die();
 }
 
+if (sessionGet($cookie, "lang") == null) {
+    header("Location: launguage.php?redirect=register.php");
+    die();
+}
+
 if (isset($_POST['login']) && isset($_POST['password']) && isset($_POST['password2']) && isset($_POST['email'])) {
 
     $login = $_POST['login'];
@@ -93,11 +104,11 @@ if (isset($_POST['login']) && isset($_POST['password']) && isset($_POST['passwor
     $decoded = json_decode($json_data, true);
     
     if ($password != $password2) {
-        $response = "<p class='error'>Passwords do not match</p>";
+        $response = "<p class='error'>". getLangText("passwordsDontMatch", sessionGet($cookie, "lang")) ."</p>";
     } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $response = "<p class='error'>Email not valid</p>";
+        $response = "<p class='error'>". getLangText("invalidEmail", sessionGet($cookie, "lang")) ."</p>";
     } else if (isset($decoded[$login])) {
-        $response = "<p class='error'>Username is taken, Try: ".$login."WasTaken </p>";
+        $response = "<p class='error'>". getLangText("usernameTaken", sessionGet($cookie, "lang")) . $login."WasTaken </p>";
     } else {
         // create new user
         $decoded[$login] = array(
@@ -198,14 +209,14 @@ body {
 <body>
     <div class="authWindow"> 
         <form action="register.php" method="post">
-            <input type="text" name="login" placeholder="Username"> <br>
-            <input type="text" name="email" placeholder="Email"> <br>
-            <input type="password" name="password" placeholder="Password"> <br>
-            <input type="password" name="password2" placeholder="Confirm Password"> <br>
-            <input type="submit" value="Register">
+            <input type="text" name="login" placeholder="<?php echo getLangText("username", sessionGet($cookie, "lang"))?>"> <br>
+            <input type="text" name="email" placeholder="<?php echo getLangText("email", sessionGet($cookie, "lang"))?>"> <br>
+            <input type="password" name="password" placeholder="<?php echo getLangText("password", sessionGet($cookie, "lang"))?>"> <br>
+            <input type="password" name="password2" placeholder="<?php echo getLangText("confirmPassword", sessionGet($cookie, "lang"))?>"> <br>
+            <input type="submit" value="<?php echo getLangText("registerButton", sessionGet($cookie, "lang"))?>">
         </form>
 
-        <a href="login.php">Already registered?</a> <br>
+        <a href="login.php"><?php echo getLangText("alreadyRegistered", sessionGet($cookie, "lang"))?></a> <br>
         <?php echo($response);?>
 
     </div>

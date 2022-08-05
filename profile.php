@@ -45,6 +45,14 @@ function sessionSet($token, $key, $value) {
     fwrite($myfile, $finalJson);
     fclose($myfile);
 }
+
+function getLangText($id, $lang) {
+    $text = file_get_contents("lang/$lang.json");
+    $text = json_decode($text, true);
+    return $text[$id];
+}
+
+
 /*
 if (!isset($_SESSION['token'])) {
     $_SESSION['token'] = session_id();   
@@ -85,6 +93,10 @@ if (!isset($_COOKIE["token"])) {
     $cookie = $_COOKIE["token"];
 }
 
+if (sessionGet($cookie, "lang") == null) {
+    header("Location: launguage.php?redirect=profile.php");
+    die();
+}
 if (sessionGet($cookie, "token") == null) {
     sessionSet($cookie, "token", $cookie); 
 }
@@ -123,41 +135,41 @@ if ($_GET["user"] == "" || $_GET["user"] == null || !isset($stats[$_GET["user"]]
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>Mole's Five-In-Row</header>
+    <header><?php echo getLangText("name", sessionGet($cookie, "lang"))?></header>
     <div id="stats">
-    <h1><?php echo $user; ?> - User Profile<h1>
-    <p> Played Matches: <?php 
+    <h1><?php echo $user; ?> - <?php echo getLangText("userProfile", sessionGet($cookie, "lang")); ?><h1>
+    <p> <?php echo getLangText("playedMatches", sessionGet($cookie, "lang")); ?>: <?php 
     if (isset($stats[$user]["plays"])) {
         echo $stats[$user]["plays"]; 
     } else {
         echo "0";
     }
     ?></p>
-    <p> Wins: <?php 
+    <p> <?php echo getLangText("wins", sessionGet($cookie, "lang")); ?>: <?php 
     if (isset($stats[$user]["wins"])) {
         echo $stats[$user]["wins"]; 
     } else {
         echo "0";
     }
     ?></p>
-    <p> Losses: <?php 
+    <p> <?php echo getLangText("losses", sessionGet($cookie, "lang")); ?>: <?php 
     if (isset($stats[$user]["losses"])) {
         echo $stats[$user]["losses"]; 
     } else {
         echo "0";
     }
     ?></p>
-    <p> Draws: <?php 
+    <p> <?php echo getLangText("draws", sessionGet($cookie, "lang")); ?>: <?php 
     if (isset($stats[$user]["draws"])) {
         echo $stats[$user]["draws"]; 
     } else {
         echo "0";
     }
     ?></p>
-    <p> Winrate: <?php
+    <p> <?php echo getLangText("winPercent", sessionGet($cookie, "lang")); ?>: <?php
     
         if ($stats[$user]["plays"] == 0) {
-            echo "0%";
+            echo "0";
         } else {
             echo round(($stats[$user]["wins"] / $stats[$user]["plays"]) * 100, 2);
         }
@@ -165,15 +177,15 @@ if ($_GET["user"] == "" || $_GET["user"] == null || !isset($stats[$_GET["user"]]
     
     ?>%</p>
 
-    <h2> Matchup stats </h2>
+    <h2> <?php echo getLangText("matchupStats", sessionGet($cookie, "lang")); ?> </h2>
     <table>
 
         <tr>
-            <th>Opponent</th>
-            <th>Wins</th>
-            <th>Losses</th>
-            <th>Draws</th>
-            <th>Winrate</th>
+            <th><?php echo getLangText("opponent", sessionGet($cookie, "lang")); ?></th>
+            <th><?php echo getLangText("wins", sessionGet($cookie, "lang")); ?></th>
+            <th><?php echo getLangText("losses", sessionGet($cookie, "lang")); ?></th>
+            <th><?php echo getLangText("draws", sessionGet($cookie, "lang")); ?></th>
+            <th><?php echo getLangText("winPercent", sessionGet($cookie, "lang")); ?></th>
         </tr>
         <?php
         $userMatchups = $stats[$user]["matchups"];

@@ -1,25 +1,5 @@
 <?php 
-
 error_reporting(0);
-//session_start();
-
-function Encrypted($text) {
-    $key = getenv('key');
-    $string = $text;
-    $pass = $key;
-    $method = 'aes128';
-    return openssl_encrypt($string, $method, $pass);
-
-}
-
-function Decrypted($text) {
-    $key = getenv('key');
-    $string = $text;
-    $pass = $key;
-    $method = 'aes128';
-    return openssl_decrypt($string, $method, $pass);
-}
-
 function sessionGet($token, $key) {
     $sessiondata = file_get_contents("sessions.json");
     $sessiondata = Decrypted($sessiondata);
@@ -64,13 +44,6 @@ function sessionSet($token, $key, $value) {
     fclose($myfile);
 }
 
-function getLangText($id, $lang) {
-    $text = file_get_contents("lang/$lang.json");
-    $text = json_decode($text, true);
-    return $text[$id];
-}
-
-
 if (!isset($_COOKIE["token"])) {
     $random = random_str();
     setcookie("token", $random, time() + (86400 * 30), "/");
@@ -84,46 +57,50 @@ if (sessionGet($cookie, "token") == null) {
 }
 
 
-if(sessionGet($cookie, "authed") == true) {
-    header("Location: index.php");
-    die();
+
+
+function Encrypted($text) {
+    $key = getenv('key');
+    $string = $text;
+    $pass = $key;
+    $method = 'aes128';
+    return openssl_encrypt($string, $method, $pass);
+
 }
 
-if (sessionGet($cookie, "lang") == null) {
-    header("Location: launguage.php?redirect=login.php");
-    die();
+function Decrypted($text) {
+    $key = getenv('key');
+    $string = $text;
+    $pass = $key;
+    $method = 'aes128';
+    return openssl_decrypt($string, $method, $pass);
 }
 
-if ($_POST['login'] !== "" && $_POST['login'] !== null && $_POST['password'] !== "" && $_POST['password'] !== null) {
+if (isset($_POST["lang"])) {
+    sessionSet($cookie, "lang", $_POST["lang"]);
 
-    $login = $_POST['login'];
-    $password = $_POST['password'];
-    $password2 = $_POST['password2'];
-    $email = $_POST['email'];
-
-    $json_data = file_get_contents('users.json');
-    $json_data = Decrypted($json_data);
-    $decoded = json_decode($json_data, true);
-  
-    if (!isset($decoded[$login])) {
-        $response = "<p class='error'> </p>";
-    } else if ($decoded[$login]['password'] != hash("sha256", $password)) {
-        $response = "<p class='error'>". getLangText("wrongPassword", sessionGet($cookie, "lang")) ."</p>";
+    if (isset($_GET["match"])) {
+        $redirect = "/game.php?match=" . $_GET["match"];
+    } else if (isset($_GET["redirect"])) {
+        $redirect = $_GET["redirect"];
     } else {
-        // logged in
-        //session_id($decoded[$login]['token']);
-        /*
-        $_SESSION['token'] = $decoded[$login]['token'];
-        $_SESSION['login'] = $login;
-        $_SESSION['authed'] = true;*/
-        sessionSet($cookie, "token", $decoded[$login]['token']);	
-        sessionSet($cookie, "login", $login);
-        sessionSet($cookie, "authed", true);
-        header("Location: index.php");
-        die();
+        $redirect = "/index.php";
     }
-        
-} 
+
+    header("Location: " . $redirect);
+    die();
+
+}
+
+// find request url
+
+if (isset($_GET["match"])) {
+    $link = "/launguage.php?match=" . $_GET["match"];
+} else if (isset($_GET["redirect"])) {
+    $link = "/launguage.php?redirect=" . $_GET["redirect"];
+} else {
+    $link = "/launguage.php";
+}
 
 ?>
 
@@ -136,10 +113,10 @@ if ($_POST['login'] !== "" && $_POST['login'] !== null && $_POST['password'] !==
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
-    <title>Mole's Five-In-a-Row</title>
+    <title>Mole's Five-In-A-Row</title>
     <link rel="stylesheet" href="style.css">
 
-<style>
+    <style>
 body {
     line-height: 30px;
 }
@@ -158,6 +135,7 @@ body {
     width: 400px;
     height: 200px;
     z-index: 9999;
+    font-family: 'Roboto Slab', serif;
 }
 
 .authWindow p {
@@ -166,6 +144,15 @@ body {
 }
 
 .authWindow input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0 10px;
+    margin-top: 10px;
+}
+
+.authWindow select {
     width: 100%;
     height: 40px;
     border: 1px solid #ccc;
@@ -185,21 +172,17 @@ body {
 }
 </style>
 
+
 </head>
-
 <body>
-    <div class="authWindow"> 
-        <form action="login.php" method="post">
-            <input type="text" name="login" placeholder="<?php echo getLangText("username", sessionGet($cookie, "lang"))?>"> <br>
-            <input type="password" name="password" placeholder="<?php echo getLangText("password", sessionGet($cookie, "lang"))?>"> <br>
-            <input type="submit" value="<?php echo getLangText("loginButton", sessionGet($cookie, "lang"))?>">
-        </form>
-
-        <a href="register.php"><?php echo getLangText("notRegisteredYet", sessionGet($cookie, "lang"))?></a>
-        <?php echo $response; ?>
-
-    </div>
-
+<div class="authWindow"> 
+    Choose your language:
+    <form action="<?php echo $link; ?>" method="POST">
+        <select name="lang">
+            <option value="en">English</option>
+            <option value="cz">Čeština</option>
+        </select>
+        <input type="submit" value="Submit">
+    </form>
 </body>
-
 </html>
