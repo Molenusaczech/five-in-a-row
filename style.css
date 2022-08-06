@@ -83,6 +83,7 @@ body {
 
     
     line-height: 6vmin;
+    border: 3px solid #091D34;
 
 }
 
@@ -172,4 +173,9 @@ td {
     width: 50%;
     height: 100%;
     float: left;
+}
+
+a {
+    color: black;
+    text-decoration: none;
 }

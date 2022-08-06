@@ -507,6 +507,14 @@
             $match_data["player2name"] = getLangText("waiting", $lang);
         }
 
+        if ($status == "turn1") {
+            $match_data["highlight"] = 1;
+        } else if ($status == "turn2") {
+            $match_data["highlight"] = 2;
+        } else {
+            $match_data["highlight"] = 0;
+        }
+
         //Stat handler
 
         $stats = file_get_contents('stats.json');

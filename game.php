@@ -240,12 +240,37 @@ colors:
             document.getElementById("rematch").innerHTML = "<?php echo getLangText("acceptRematch", sessionGet($cookie, "lang"))?>";
         }
 
-        document.getElementById("p1name").innerHTML = myObj["player1name"];
-        document.getElementById("p2name").innerHTML = myObj["player2name"];
+        /*document.getElementById("p1name").innerHTML = myObj["player1name"];
+        document.getElementById("p2name").innerHTML = myObj["player2name"];*/
+
+        if (myObj["p1symbol"] == "null") {
+            document.getElementById("p1name").innerHTML = myObj["player1name"];
+        } else {
+            document.getElementById("p1name").innerHTML = myObj["player1name"] + " (" + myObj["p1symbol"] + ")";
+        }
+
+        if (myObj["p2symbol"] == "null") {
+            document.getElementById("p2name").innerHTML = myObj["player2name"];
+        } else {
+            document.getElementById("p2name").innerHTML = myObj["player2name"] + " (" + myObj["p2symbol"] + ")";
+        }
+
         document.getElementById("p1name").href = "/profile.php?user="+myObj["player1name"];
         if (myObj["player2name"] !== "<?php echo getLangText("waiting", sessionGet($cookie, "lang"))?>") {
             document.getElementById("p2name").href = "/profile.php?user="+myObj["player2name"];
         } 
+
+        if (myObj["highlight"] == "1") {
+            document.getElementById("p1name").style.fontWeight = "bold";
+        } else {
+            document.getElementById("p1name").style.fontWeight = "normal";
+        }
+
+        if (myObj["highlight"] == "2") {
+            document.getElementById("p2name").style.fontWeight = "bold";
+        } else {
+            document.getElementById("p2name").style.fontWeight = "normal";
+        }
 
         /*if (status == "redirect") {
             var link = myObj["redirect"];
