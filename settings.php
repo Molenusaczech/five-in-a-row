@@ -1,5 +1,7 @@
 <?php 
+//session_start();
 error_reporting(0);
+
 function Encrypted($text) {
     $key = getenv('key');
     $string = $text;
@@ -45,14 +47,6 @@ function sessionSet($token, $key, $value) {
     fwrite($myfile, $finalJson);
     fclose($myfile);
 }
-
-function getLangText($id, $lang) {
-    $text = file_get_contents("lang/$lang.json");
-    $text = json_decode($text, true);
-    return $text[$id];
-}
-
-
 /*
 if (!isset($_SESSION['token'])) {
     $_SESSION['token'] = session_id();   
@@ -80,6 +74,12 @@ function randomName() {
     return $adjectives[rand(0, count($adjectives) - 1)] . $names[rand(0, count($names) - 1)] . $randomNumber;
 }
 
+function getLangText($id, $lang) {
+    $text = file_get_contents("lang/$lang.json");
+    $text = json_decode($text, true);
+    return $text[$id];
+}
+
 /*
 if (!isset($_SESSION['login'])) {
     $_SESSION['login'] = randomName();   
@@ -93,10 +93,6 @@ if (!isset($_COOKIE["token"])) {
     $cookie = $_COOKIE["token"];
 }
 
-if (sessionGet($cookie, "lang") == null) {
-    header("Location: launguage.php?redirect=profile.php");
-    die();
-}
 if (sessionGet($cookie, "token") == null) {
     sessionSet($cookie, "token", $cookie); 
 }
@@ -106,18 +102,15 @@ if (sessionGet($cookie, "login") == null) {
     sessionSet($cookie, "login", randomName());
 }
 
-$stats = file_get_contents("stats.json");
-$stats = json_decode($stats, true);
+if (sessionGet($cookie, "lang") == null) {
+    header("Location: launguage.php");
+    die();
+}
 
-if ($_GET["user"] == "" || $_GET["user"] == null || !isset($stats[$_GET["user"]])) {
-    if (sessionGet($cookie, "login") == null) {
-        header("Location: index.php");
-        die();
-    } else {
-        $user = sessionGet($cookie, "login");
-    }
-} else {
-    $user = $_GET["user"];
+if (isset($_POST['theme'])) {
+    sessionSet($cookie, "theme", $_POST['theme']);
+} else if (isset($_POST['theme'])) {
+    sessionSet($cookie, "theme", $_POST['theme']);
 }
 
 ?>
@@ -140,101 +133,82 @@ if ($_GET["user"] == "" || $_GET["user"] == null || !isset($stats[$_GET["user"]]
     }
     ?>
 
+<style>
+input {
+    width: 20%;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0 10px;
+    margin-top: 10px;
+}
+
+select {
+    width: 20%;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0 10px;
+    margin-top: 10px;
+}
+</style>
+
 </head>
+
 <body>
-<header>
+    <header>
         <?php echo getLangText("name", sessionGet($cookie, "lang"))?>
         <a href="index.php"><?php echo getLangText("home", sessionGet($cookie, "lang"))?></a>
         <a href="mygames.php"><?php echo getLangText("myGames", sessionGet($cookie, "lang"))?></a>
         <a href="profile.php"><?php echo getLangText("myProfile", sessionGet($cookie, "lang"))?></a>
         <a href="settings.php"><?php echo getLangText("settings", sessionGet($cookie, "lang"))?></a>
     </header>
-    <div id="stats">
-    <h1><?php echo $user; ?> - <?php echo getLangText("userProfile", sessionGet($cookie, "lang")); ?><h1>
-    <p> <?php echo getLangText("playedMatches", sessionGet($cookie, "lang")); ?>: <?php 
-    if (isset($stats[$user]["plays"])) {
-        echo $stats[$user]["plays"]; 
-    } else {
-        echo "0";
-    }
-    ?></p>
-    <p> <?php echo getLangText("wins", sessionGet($cookie, "lang")); ?>: <?php 
-    if (isset($stats[$user]["wins"])) {
-        echo $stats[$user]["wins"]; 
-    } else {
-        echo "0";
-    }
-    ?></p>
-    <p> <?php echo getLangText("losses", sessionGet($cookie, "lang")); ?>: <?php 
-    if (isset($stats[$user]["losses"])) {
-        echo $stats[$user]["losses"]; 
-    } else {
-        echo "0";
-    }
-    ?></p>
-    <p> <?php echo getLangText("draws", sessionGet($cookie, "lang")); ?>: <?php 
-    if (isset($stats[$user]["draws"])) {
-        echo $stats[$user]["draws"]; 
-    } else {
-        echo "0";
-    }
-    ?></p>
-    <p> <?php echo getLangText("winPercent", sessionGet($cookie, "lang")); ?>: <?php
+
+
+    <?php 
     
-        if ($stats[$user]["plays"] == 0) {
-            echo "0";
-        } else {
-            echo round(($stats[$user]["wins"] / $stats[$user]["plays"]) * 100, 2);
-        }
+    if (sessionGet($cookie, "lang") == "en") {
+        $enselected = "selected";
+    } else {
+        $enselected = "";
+    }
     
+    if (sessionGet($cookie, "lang") == "cz") {
+        $czselected = "selected";
+    } else {
+        $czselected = "";
+    }
+
+
+
+    if (sessionGet($cookie, "theme") == "normal") {
+        $normalselected = "selected";
+    } else {
+        $normalselected = "";
+    }
     
-    ?>%</p>
+    if (sessionGet($cookie, "theme") == "dark") {
+        $darkselected = "selected";
+    } else {
+        $darkselected = "";
+    }
 
-    <h2> <?php echo getLangText("matchupStats", sessionGet($cookie, "lang")); ?> </h2>
-    <table>
+    ?>
 
-        <tr>
-            <th><?php echo getLangText("opponent", sessionGet($cookie, "lang")); ?></th>
-            <th><?php echo getLangText("wins", sessionGet($cookie, "lang")); ?></th>
-            <th><?php echo getLangText("losses", sessionGet($cookie, "lang")); ?></th>
-            <th><?php echo getLangText("draws", sessionGet($cookie, "lang")); ?></th>
-            <th><?php echo getLangText("winPercent", sessionGet($cookie, "lang")); ?></th>
-        </tr>
-        <?php
-        $userMatchups = $stats[$user]["matchups"];
-        foreach ($userMatchups as $key => $value) {
-           
-                echo "<tr>";
-                echo "<td><a href=/profile.php?user=" . $key . ">" . $key . "</a></td>";
-                if (!isset($value["wins"])) {
-                    echo "<td>0</td>";
-                } else {
-                    echo "<td>" . $value["wins"] . "</td>";
-                }
-                if (!isset($value["losses"])) {
-                    echo "<td>0</td>";
-                } else {
-                    echo "<td>" . $value["losses"] . "</td>";
-                }
-                
-                if (!isset($value["draws"])) {
-                    echo "<td>0</td>";
-                } else {
-                    echo "<td>" . $value["draws"] . "</td>";
-                }
-
-                echo "<td>" . round($value["wins"] / $value["plays"] * 100, 2) . "%</td>";
-                echo "</tr>";
-            
-        }
-        ?>
-
-    </table>
-</div>
-
-Achievments:
-Coming soon
-
+    <form action="launguage.php" method="post">
+        <select name="lang">
+            <option value="en" <?php echo $enselected ?>>English</option>
+            <option value="cz" <?php echo $czselected ?>>Čeština</option>
+        </select> <br>
+        <input type="submit" value="<?php echo getLangText("changeLang", sessionGet($cookie, "lang"))?>">
+    </form>
+    <form action="settings.php" method="post">
+        <select name="theme">
+            <option value="normal" <?php echo $normalselected ?>>Normal</option>
+            <option value="dark" <?php echo $darkselected ?>>Dark</option>
+        </select> <br>
+        <input type="submit" value="<?php echo getLangText("changeTheme", sessionGet($cookie, "lang"))?>">
+    </form>
 </body>
 
 </html>

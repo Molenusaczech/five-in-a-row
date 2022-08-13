@@ -162,6 +162,11 @@ colors:
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <?php 
+    if (sessionGet($cookie, "theme") == "dark") {
+        echo '<link rel="stylesheet" href="themes/dark.css">';
+    }
+    ?>
     <title>Mole's Five-In-a-Row</title>
 
 <style>
@@ -195,8 +200,12 @@ colors:
         }
 
         if (myObj["lastmove"] !== last) {
+            /*
             document.getElementById(myObj["lastlastmove"]).style.backgroundColor = "#E1ECF9";
-            document.getElementById(myObj["lastmove"]).style.backgroundColor = "orange";
+            document.getElementById(myObj["lastmove"]).style.backgroundColor = "orange";*/
+
+            document.getElementById(myObj["lastlastmove"]).classList.remove("lastmove");
+            document.getElementById(myObj["lastmove"]).classList.add("lastmove");
         }
         
         console.log(board);
@@ -336,7 +345,13 @@ colors:
 
     </script>
 
-    <header><?php echo getLangText("name", sessionGet($cookie, "lang"))?></header>
+<header>
+        <?php echo getLangText("name", sessionGet($cookie, "lang"))?>
+        <a href="index.php"><?php echo getLangText("home", sessionGet($cookie, "lang"))?></a>
+        <a href="mygames.php"><?php echo getLangText("myGames", sessionGet($cookie, "lang"))?></a>
+        <a href="profile.php"><?php echo getLangText("myProfile", sessionGet($cookie, "lang"))?></a>
+        <a href="settings.php"><?php echo getLangText("settings", sessionGet($cookie, "lang"))?></a>
+    </header>
 
     <div id="main">
     <?php 

@@ -283,6 +283,7 @@
 
         if (checkWin($matchid, $p1symbol)) {
             $json_data[$matchid]["status"] = "win1";
+            $json_data[$matchid]["winner"] = "win1";
             //debugLog("player 1 win");
 
             $stats[$player1name]["wins"] = $stats[$player1name]["wins"] + 1;
@@ -296,6 +297,7 @@
 
         } else if (checkWin($matchid, $p2symbol)) {
             $json_data[$matchid]["status"] = "win2";
+            $json_data[$matchid]["winner"] = "win2";
             //debugLog("player 2 win");
 
             $stats[$player2name]["wins"] = $stats[$player2name]["wins"] + 1;
@@ -309,6 +311,7 @@
 
         } else if (count($json_data[$matchid]["board"]) == 225) {
             $json_data[$matchid]["status"] = "draw";
+            $json_data[$matchid]["winner"] = "draw";
             //debugLog("draw");
 
             $stats[$player2name]["draws"] = $stats[$player2name]["draws"] + 1;
@@ -401,6 +404,7 @@
             //debugLog("createRematch json1: $json_data");
             $json_data = json_decode($json_data, true);
 
+            //$json_data[$matchid]["winner"] = $json_data[$matchid]["status"];
             $json_data[$matchid]["status"] = "redirect";
             $json_data[$matchid]["redirect"] = "game.php?match=".$newmatchid;
 

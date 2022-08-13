@@ -120,6 +120,12 @@ if (sessionGet($cookie, "lang") == null) {
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
     <title>Mole's Five-In-a-Row</title>
     <link rel="stylesheet" href="style.css">
+
+    <?php 
+    if (sessionGet($cookie, "theme") == "dark") {
+        echo '<link rel="stylesheet" href="themes/dark.css">';
+    }
+    ?>
 </head>
 <body>
 
@@ -128,6 +134,7 @@ if (sessionGet($cookie, "lang") == null) {
         <a href="index.php"><?php echo getLangText("home", sessionGet($cookie, "lang"))?></a>
         <a href="mygames.php"><?php echo getLangText("myGames", sessionGet($cookie, "lang"))?></a>
         <a href="profile.php"><?php echo getLangText("myProfile", sessionGet($cookie, "lang"))?></a>
+        <a href="settings.php"><?php echo getLangText("settings", sessionGet($cookie, "lang"))?></a>
     </header>
     
 <table id="mygames"> 

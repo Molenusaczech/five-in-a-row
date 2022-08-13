@@ -44,5 +44,19 @@
     "matchEnded": "Match has ended",
     "playedMatches": "Played matches",
     "opponent": "Opponent",
-    "userProfile": "User Profile"
+    "userProfile": "User Profile",
+    "gameId": "Game ID",
+    "status": "Status",
+    "gameEnded": "Game ended",
+    "waitingForOpponent": "Waiting for opponent",
+    "waitingForYourSwap": "Waiting for you to finish SWAP",
+    "waitingForYourSymbol": "Waiting for you to choose a symbol",
+    "turn": "Turn",
+    "replayControls": "Replay Controls",
+    "home": "Home",
+    "myGames": "My Games",
+    "myProfile": "My Profile",
+    "settings": "Settings",
+    "changeLang": "Change Language",
+    "changeTheme": "Change Theme"
 }

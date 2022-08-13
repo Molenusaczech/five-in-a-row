@@ -1,0 +1,40 @@
+.field {
+    background-color: #00234b;
+    border: 1px solid #277de0;
+    color: #bddcff;
+}
+
+.field:hover {
+    background-color: #1464c0;
+}
+
+body {
+    background-color: #000000;
+}
+
+td, #p1name, #p2name, th{
+    color: #277de0;
+}
+
+header {
+    background-color: #193b63;
+    color: #277de0;
+}
+
+header a {
+    color: #277de0;
+}
+
+.lastmove {
+    background-color: #1464c0;
+}
+
+p, a, h1{
+    color: #277de0;
+}
+
+.hrefbutton {
+    border: 2px solid #277de0;
+    background-color: #193b63;
+    color: #277de0;
+}

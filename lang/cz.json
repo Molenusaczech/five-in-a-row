@@ -44,5 +44,19 @@
     "matchEnded": "Zápas skončil",
     "playedMatches": "Odehrané zápasy",
     "opponent": "Soupeř",
-    "userProfile": "Uživatelský profil"
+    "userProfile": "Uživatelský profil",
+    "gameId": "ID hry",
+    "status": "Status",
+    "gameEnded": "Hra skončila",
+    "waitingForOpponent": "Čekám na soupeře",
+    "waitingForYourSwap": "Čekám na tvůj SWAP",
+    "waitingForYourSymbol": "Čekám na tvůj výběr symbolu",
+    "turn": "Tah",
+    "replayControls": "Ovládání záznamu",
+    "home": "Domů",
+    "myGames": "Moje hry",
+    "myProfile": "Můj profil",
+    "settings": "Nastavení",
+    "changeLang": "Změnit Jazyk",
+    "changeTheme": "Změnit motiv"
 }
