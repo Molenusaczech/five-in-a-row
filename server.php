@@ -579,13 +579,14 @@
         $match_data["stats"]["matchdraw1"] = $stats[$p1name]["matchups"][$p2name]["draws"];
         $match_data["stats"]["matchdraw2"] = $stats[$p2name]["matchups"][$p1name]["draws"];
         if ($stats[$p1name]["matchups"][$p2name]["plays"] != 0) {
-            $match_data["stats"]["matchwinp1"] = $stats[$p1name]["matchups"][$p2name]["wins"] / $stats[$p1name]["matchups"][$p2name]["plays"] * 100 . "%";
+            // round($stats[$p1name]["wins"] / $stats[$p1name]["plays"] * 100, 2)
+            $match_data["stats"]["matchwinp1"] = round($stats[$p1name]["matchups"][$p2name]["wins"] / $stats[$p1name]["matchups"][$p2name]["plays"] * 100, 2) . "%";
         } else {
             $match_data["stats"]["matchwinp1"] = 0;
         }
 
         if ($stats[$p2name]["matchups"][$p1name]["plays"] != 0) {
-            $match_data["stats"]["matchwinp2"] = $stats[$p2name]["matchups"][$p1name]["wins"] / $stats[$p2name]["matchups"][$p1name]["plays"] * 100 . "%";
+            $match_data["stats"]["matchwinp2"] = round($stats[$p2name]["matchups"][$p1name]["wins"] / $stats[$p2name]["matchups"][$p1name]["plays"] * 100, 2) . "%";
         } else {
             $match_data["stats"]["matchwinp2"] = 0;
         }

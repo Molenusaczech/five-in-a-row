@@ -80,6 +80,10 @@ function randomName() {
     return $adjectives[rand(0, count($adjectives) - 1)] . $names[rand(0, count($names) - 1)] . $randomNumber;
 }
 
+function getGameCount($object) {
+    return $object["plays"];
+}
+
 /*
 if (!isset($_SESSION['login'])) {
     $_SESSION['login'] = randomName();   
@@ -202,10 +206,17 @@ if ($_GET["user"] == "" || $_GET["user"] == null || !isset($stats[$_GET["user"]]
         </tr>
         <?php
         $userMatchups = $stats[$user]["matchups"];
+
+        foreach ($userMatchups as $key => $value) {
+            $userMatchups[$key]["name"] = $key;
+        }
+
+        usort($userMatchups, "getGameCount");
+
         foreach ($userMatchups as $key => $value) {
            
                 echo "<tr>";
-                echo "<td><a href=/profile.php?user=" . $key . ">" . $key . "</a></td>";
+                echo "<td><a href=/profile.php?user=" . $value["name"] . ">" . $value["name"] . "</a></td>";
                 if (!isset($value["wins"])) {
                     echo "<td>0</td>";
                 } else {

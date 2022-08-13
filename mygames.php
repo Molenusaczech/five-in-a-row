@@ -151,6 +151,8 @@ if (sessionGet($cookie, "lang") == null) {
     $games = Decrypted($games);
     $games = json_decode($games, true);
 
+    $games = array_reverse($games);
+
     foreach ($games as $key => $value) {
         $login = sessionGet($cookie, "login");
         
