@@ -117,6 +117,13 @@ if (sessionGet($cookie, "lang") == null) {
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <title>Mole's Five-In-a-Row</title>
+
+    <?php 
+    if (sessionGet($cookie, "theme") == "dark") {
+        echo '<link rel="stylesheet" href="themes/dark.css">';
+    }
+    ?>
+
 </head>
 <body>
 <header>

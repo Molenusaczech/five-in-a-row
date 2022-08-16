@@ -141,7 +141,7 @@ if (sessionGet($cookie, "lang") == null) {
         <a href="profile.php"><?php echo getLangText("myProfile", sessionGet($cookie, "lang"))?></a>
         <a href="settings.php"><?php echo getLangText("settings", sessionGet($cookie, "lang"))?></a>
     </header>
-
+    <div id="leftside">
     <?php 
     if (sessionGet($cookie, "authed") == true) {
         echo "<p class='authed'>". getLangText("loggedIn", sessionGet($cookie, "lang")) ."<a href='profile.php'> " . sessionGet($cookie, "login") . "</a> <a href='logout.php'>". getLangText("logout", sessionGet($cookie, "lang")) ."</a></p> ";
@@ -151,7 +151,174 @@ if (sessionGet($cookie, "lang") == null) {
     ?>
 
     <p><?php echo getLangText("createGameLabel", sessionGet($cookie, "lang"))?></p>
-    <a class="hrefbutton" href="creategame.php"><?php echo getLangText("createGame", sessionGet($cookie, "lang"))?></a>
+    <a class="hrefbutton" href="create.php"><?php echo getLangText("createGame", sessionGet($cookie, "lang"))?></a>
+    <h1> <?php echo getLangText("currentGames", sessionGet($cookie, "lang"))?> </h1>
+    <table class="gamestable">
+        <tr>
+            <th><?php echo getLangText("gameId", sessionGet($cookie, "lang"))?></th>
+            <th><?php echo getLangText("opponent", sessionGet($cookie, "lang"))?></th>
+            <th><?php echo getLangText("status", sessionGet($cookie, "lang"))?></th>
+        </tr>
+        <?php
+        $games = file_get_contents("games.json");
+        $games = Decrypted($games);
+        $games = json_decode($games, true);
+        $games = array_reverse($games);
+        foreach ($games as $key => $value) {
+
+        $login = sessionGet($cookie, "login");
+        $status = $value["status"];
+
+        if ($status !== "redirect" && $status !== "rematch1" && $status !== "rematch2" && $status !== "win1" && $status !== "win2" && $status !== "draw") {
+            $live = 1;
+        } else {
+            $live = 0;
+        }
+        
+        if (($value["player1name"] == $login || $value["player2name"] == $login) && $live == 1) {
+            $id = $key;
+            $status = $value["status"];
+            if ($value["player1name"] == $login) {
+                $opponent = $value["player2name"];
+                $player = 1;
+            } else {
+                $opponent = $value["player1name"];
+                $player = 2;
+            }
+
+            if ($status == "turn1") {
+                if ($player == 1) {
+                    $status = getLangText("yourTurn", sessionGet($cookie, "lang"));
+                    $class = "badge badge-blue";
+                } else {
+                    $status = getLangText("opponentTurn", sessionGet($cookie, "lang"));
+                    $class = "badge badge-yellow";
+                }
+            }
+
+            if ($status == "turn2") {
+                if ($player == 2) {
+                    $status = getLangText("yourTurn", sessionGet($cookie, "lang"));
+                    $class = "badge badge-blue";
+                } else {
+                    $status = getLangText("opponentTurn", sessionGet($cookie, "lang"));
+                    $class = "badge badge-yellow";
+                }
+            }
+            
+            if ($status == "redirect" || $status == "win1" || $status == "win2" || $status == "draw" || $status == "rematch1" || $status == "rematch2") {
+                $redirect = "replay.php?match=$id";
+            } else {
+                $redirect = "game.php?match=$id";
+            }
+
+            if ($status == "win1" || $value["winner"] == "win1") {
+                if ($player == 1) {
+                    $status = getLangText("youWon", sessionGet($cookie, "lang"));
+                    $class = "badge badge-green";
+                } else {
+                    $status = getLangText("youLost", sessionGet($cookie, "lang"));
+                    $class = "badge badge-red";
+                }
+            } else if ($status == "win2" || $value["winner"] == "win2") {
+                if ($player == 2) {
+                    $status = getLangText("youWon", sessionGet($cookie, "lang"));
+                    $class = "badge badge-green";
+                } else {
+                    $status = getLangText("youLost", sessionGet($cookie, "lang"));
+                    $class = "badge badge-red";
+                }
+            } else if ($status == "draw" || $value["winner"] == "draw") {
+                $status = getLangText("draw", sessionGet($cookie, "lang"));
+                $class = "badge badge-grey";
+            } else if ($status == "redirect") {
+                $status = getLangText("gameEnded", sessionGet($cookie, "lang"));
+                $class = "badge badge-grey";
+            }
+
+            if ($status == "waiting") {
+                $status = getLangText("waitingForOpponent", sessionGet($cookie, "lang"));
+                $class = "badge badge-grey";
+            }
+
+            if ($status == "swap1" || $status == "swap2" || $status == "swap3") {
+                if ($player == 1) {
+                    $status = getLangText("waitingForSwap", sessionGet($cookie, "lang"));
+                    $class = "badge badge-yellow";
+                } else {
+                    $status = getLangText("waitingForYourSwap", sessionGet($cookie, "lang"));
+                    $class = "badge badge-blue";
+                }
+            }
+
+            if ($status == "choose") {
+                if ($player == 1) {
+                    $status = getLangText("waitingForChoose", sessionGet($cookie, "lang"));
+                    $class = "badge badge-yellow";
+                } else {
+                    $status = getLangText("waitingForYourSymbol", sessionGet($cookie, "lang"));
+                    $class = "badge badge-blue";
+                }
+            }
+
+            if ($status == "challenge") {
+                if ($player == 1) {
+                    $status = getLangText("waitingForChallengeAccept", sessionGet($cookie, "lang"));
+                    $class = "badge badge-yellow";
+                } else {
+                    $status = getLangText("waitingForYourAccept", sessionGet($cookie, "lang"));
+                    $class = "badge badge-blue";
+                }
+            }
+
+            echo <<<END
+            <tr> 
+                <td><a href="$redirect">$id</a></td> 
+                <td><span class="$class">$status</span></td> 
+                <td><a href="/profile.php?user=$opponent">$opponent</a></td>
+            </tr>
+            END;
+
+        }
+        }
+        ?>
+    </table>
+
+    </div>
+
+    <h1> <?php echo getLangText("openGames", sessionGet($cookie, "lang"))?> </h1>
+    <table class="opengames">
+        <tr>
+            <th><?php echo getLangText("gameId", sessionGet($cookie, "lang"))?></th>
+            <th><?php echo getLangText("opponent", sessionGet($cookie, "lang"))?></th>
+            
+        </tr>
+        <?php
+        $games = file_get_contents("games.json");
+        $games = Decrypted($games);
+        $games = json_decode($games, true);
+        $games = array_reverse($games);
+        foreach ($games as $key => $value) {
+
+        $login = sessionGet($cookie, "login");
+        $status = $value["status"];
+
+        if ($status == "waiting" && $value["player1name"] !== $login && $value["public"] == "true") {
+            $opponent = $value["player1name"];
+            $id = $key;
+            $redirect = "game.php?match=$id";
+            echo <<<END
+            <tr> 
+                <td><a href="$redirect">$id</a></td> 
+                <td><a href="/profile.php?user=$opponent">$opponent</a></td>
+            </tr>
+            END;
+
+        }
+        }
+        ?>
+    </table>
+
 </body>
 
 </html>

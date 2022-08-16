@@ -502,7 +502,9 @@
             
             $match_data["userStatus"] = getLangText("matchEnded", $lang);
             
-        } 
+        } else if ($status = "challenge") {
+            $match_data["userStatus"] = getLangText("challengePending", $lang);
+        }
 
         unset($match_data["player1"]);
         unset($match_data["player2"]);

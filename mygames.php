@@ -242,6 +242,16 @@ if (sessionGet($cookie, "lang") == null) {
                 }
             }
 
+            if ($status == "challenge") {
+                if ($player == 1) {
+                    $status = getLangText("waitingForChallengeAccept", sessionGet($cookie, "lang"));
+                    $class = "badge badge-yellow";
+                } else {
+                    $status = getLangText("waitingForYourAccept", sessionGet($cookie, "lang"));
+                    $class = "badge badge-blue";
+                }
+            }
+
             echo <<<END
             <tr> 
                 <td><a href="$redirect">$id</a></td> 

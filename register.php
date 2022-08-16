@@ -109,6 +109,8 @@ if (isset($_POST['login']) && isset($_POST['password']) && isset($_POST['passwor
         $response = "<p class='error'>". getLangText("invalidEmail", sessionGet($cookie, "lang")) ."</p>";
     } else if (isset($decoded[$login])) {
         $response = "<p class='error'>". getLangText("usernameTaken", sessionGet($cookie, "lang")) . $login."WasTaken </p>";
+    } else if ($login == "null") {
+        $response = "<p class='error'>hahaha hecker</p>";
     } else {
         // create new user
         $decoded[$login] = array(

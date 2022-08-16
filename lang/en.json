@@ -4,7 +4,7 @@
     "loggedOut": "You are not logged in (Guest Username: ",
     "login": "Login",
     "logout": "Logout",
-    "createGameLabel": "Click to create a private game, send your friend a link!",
+    "createGameLabel": "Click to create a new game, you will be redirected to the create game UI",
     "createGame": "Create Game",
     "wrongPassword": "Wrong password",
     "username": "Username",
@@ -58,5 +58,12 @@
     "myProfile": "My Profile",
     "settings": "Settings",
     "changeLang": "Change Language",
-    "changeTheme": "Change Theme"
+    "changeTheme": "Change Theme",
+    "challengePending": "Wait for your opponent to accept the challenge",
+    "waitingForChallengeAccept": "Waiting for opponent to accept challenge",
+    "waitingForYourAccept": "Waiting for you to accept challenge",
+    "currentGames": "Current Games",
+    "openGames": "Public Games",
+    "publicGame": "Public Game?",
+    "create": "Create"
 }

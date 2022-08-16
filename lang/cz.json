@@ -4,7 +4,7 @@
     "loggedOut": "Nejsi přihlášen (Jméno účtu hosta: ",
     "login": "Přihlásit se",
     "logout": "Odhlásit se",
-    "createGameLabel": "Klikni pro vytvoření soukromé hry a pošli kamarádovi odkaz",
+    "createGameLabel": "Klikni pro vytvoření nové hry, budeš přesměrován na stránku pro vytvoření hry",
     "createGame": "Vytvořit hru",
     "wrongPassword": "Špatné heslo",	
     "username": "Uživatelské jméno",
@@ -58,5 +58,12 @@
     "myProfile": "Můj profil",
     "settings": "Nastavení",
     "changeLang": "Změnit Jazyk",
-    "changeTheme": "Změnit motiv"
+    "changeTheme": "Změnit motiv",
+    "challengePending": "Čekání na přijmutí výzvy soupeřem",
+    "waitingForChallengeAccept": "Čekám na přijmutí výzvy soupeřem",
+    "waitingForYourAccept": "Čekání až přijmeš výzvu",
+    "currentGames": "Rozehrané hry",
+    "openGames": "Veřejné hry",
+    "publicGame": "Veřejná hra?",
+    "create": "Vytvořit"
 }

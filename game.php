@@ -115,7 +115,7 @@ $decoded = json_decode($json_data, true);
 $token = sessionGet($cookie, "token");
 $login = sessionGet($cookie, "login");
 
-if ($decoded[$_GET["match"]]["player2"] == "null" && $token !== $decoded[$_GET["match"]]["player1"] && !_bot_detected()) {
+if ($decoded[$_GET["match"]]["player2name"] == "null" && $token !== $decoded[$_GET["match"]]["player1"] && !_bot_detected()) {
     $decoded[$_GET["match"]]["player2"] = $token;
     $decoded[$_GET["match"]]["player2name"] = $login;
     $decoded[$_GET["match"]]["status"] = "swap1"; 
@@ -123,6 +123,16 @@ if ($decoded[$_GET["match"]]["player2"] == "null" && $token !== $decoded[$_GET["
     $finalJson = json_encode($decoded);
     $finalJson = Encrypted($finalJson);
     $myfile = fopen("games.json", "w") or die("Unable to open file!");
+
+    fwrite($myfile, $finalJson);
+    fclose($myfile);
+} else if ($decoded[$_GET["match"]]["player2"] == "null" && $login == $decoded[$_GET["match"]]["player2name"] && !_bot_detected()) {
+    $decoded[$_GET["match"]]["player2"] = $token;
+    $decoded[$_GET["match"]]["status"] = "swap1";
+    $finalJson = json_encode($decoded);
+    $finalJson = Encrypted($finalJson);
+    $myfile = fopen("games.json", "w") or die("Unable to open file!");
+
 
     fwrite($myfile, $finalJson);
     fclose($myfile);

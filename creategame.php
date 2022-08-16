@@ -100,12 +100,24 @@ $decoded = json_decode($json_data, true);
 
 $decoded[$matchid]["player1"] = $userToken;
 $decoded[$matchid]["player1name"] = $userName;
+if (isset($_GET["name"]) && $_GET["name"] != "" && $_GET["name"] != $userName) {
+    $decoded[$matchid]["player2"] = "null";
+    $decoded[$matchid]["player2name"] = $_GET["name"];
+    $decoded[$matchid]["status"] = "challenge";
+} else {
 $decoded[$matchid]["player2"] = "null";
 $decoded[$matchid]["player2name"] = "null";
 $decoded[$matchid]["status"] = "waiting";
+}
 $decoded[$matchid]["board"] = array();
 $decoded[$matchid]["p1symbol"] = "null";
 $decoded[$matchid]["p2symbol"] = "null";
+
+if ($_GET["public"] == "true" && !isset($_GET["name"])) {
+    $decoded[$matchid]["public"] = "true";
+} else {
+    $decoded[$matchid]["public"] = "false";
+}
 
 $finalJson = json_encode($decoded);
 $finalJson = Encrypted($finalJson);

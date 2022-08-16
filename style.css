@@ -259,3 +259,12 @@ header a {
 .lastmove {
     background-color: orange;   
 }
+
+#leftside {
+    float: left;
+    padding-right: 5%;
+}
+
+.opengames {
+    float: left;
+}
