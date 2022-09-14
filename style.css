@@ -6,6 +6,7 @@
 
 body {
     line-height: 50px;
+    font-family: 'Roboto Slab', serif;
 }
 
 .field {
@@ -14,16 +15,13 @@ body {
     background-color: #E1ECF9;
     border: 1px solid #091D34;
     float: left;
+    font-size: 40px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .field:hover {
     background-color: yellow;
-}
-
-.field {
-    font-size: 40px;
-    text-align: center;
-    vertical-align: middle;
 }
 
 #choose {
@@ -35,7 +33,6 @@ body {
     background-color: #609CE1;
     border: 1px solid #091D34;
     display: none;
-    font-family: 'Roboto Slab', serif;
     float: left;
     color: #091D34;
 }
@@ -50,7 +47,6 @@ body {
     margin-left: 7%;
     font-size: 40px;
     line-height: normal;
-    font-family: 'Roboto Slab', serif;
     color: #091D34;
 }
 
@@ -71,8 +67,6 @@ body {
     left: 45%;
     top: 45%;
     z-index: 100;
-    font-family: 'Roboto Slab', serif;
-    
 }
 
 #main {
@@ -86,6 +80,13 @@ body {
     border: 3px solid #091D34;
 
 }
+div#main, div.field, .authWindow {
+    margin-left: inherit;
+}
+
+table#mygames, div#stats, select, input {
+    margin-left: 10px;
+}
 
 header {
     width: 100%;
@@ -95,13 +96,12 @@ header {
     text-align: center;*/
     vertical-align: middle;
     color: #133863;
-    font-family: 'Roboto Slab', serif;
     font-size: 30px;
+    padding-left: 10px;
 }
 
 #status {
     color: #133863;
-    font-family: 'Roboto Slab', serif;
     font-size: 30px;
 }
 
@@ -118,36 +118,35 @@ header {
 }
 
 .hrefbutton {
-    border: 2px solid #091D34;
+    border: 2px solid #16304d;
     font-size: 20px;
     line-height: normal;
-    background-color: white;
+    background-color: #1c4574;
     height: 50px;
     text-decoration: none;
-    color: #091D34;
+    color: #83bdff;
     padding: 5px;
-    font-family: 'Roboto Slab', serif;
+}
+
+.hrefbutton:hover {
+    border-color: #83bdff;
+    color: #277de0;
+    background-color: #193b63;
+    transition: 0.1s;
 }
 
 .authed {
     font-size: 20px;
-    font-family: 'Roboto Slab', serif;
-}
-
-p {
-    font-family: 'Roboto Slab', serif;
 }
 
 #matchdata {
     font-size: 20px;
-    font-family: 'Roboto Slab', serif;
     /*border: 1px solid #091D34;
     background-color: grey;*/
     text-align: right;
 }
 
 td {
-    font-family: 'Roboto Slab', serif;
     font-size: 20px;
     /*border: 1px solid #091D34;*/
     padding: 10px;
@@ -156,15 +155,12 @@ td {
     border-top: 1px solid #091D34;
 }
 
-
-
 .mid {
     font-weight: bold;
 }
 
 .statTitle {
     font-size: 30px;
-    font-family: 'Roboto Slab', serif;
     font-weight: bold;
     text-align: center;
     vertical-align: middle;
@@ -181,6 +177,15 @@ a {
     text-decoration: none;
 }
 
+a[href="login.php"]:hover {
+    text-decoration: underline;
+}
+a[href*="game.php"]:hover {
+    text-decoration: underline;
+}
+a[href*="game.php"]:hover {
+    text-decoration: underline;
+}
 #replaycontrols {
     width: 300px;
     height: 175px;
@@ -189,7 +194,6 @@ a {
     vertical-align: middle;
     background-color: #609CE1;
     border: 1px solid #091D34;
-    font-family: 'Roboto Slab', serif;
     float: left;
     color: #091D34;
 }
@@ -201,10 +205,8 @@ a {
     text-align: center;
     vertical-align: middle;
     margin: 2%;
-    
     font-size: 30px;
     line-height: normal;
-    font-family: 'Roboto Slab', serif;
     color: #091D34;
 }
 
@@ -255,6 +257,10 @@ header a {
     font-size: 20px;
     vertical-align: bottom;
 }
+header a:hover {
+    text-decoration: underline;
+    color: #1b508d;
+}
 
 .lastmove {
     background-color: orange;   
@@ -262,6 +268,7 @@ header a {
 
 #leftside {
     float: left;
+    padding-left: 10px;
     padding-right: 5%;
 }
 
