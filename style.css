@@ -80,11 +80,8 @@ body {
     border: 3px solid #091D34;
 
 }
-div#main, div.field, .authWindow {
-    margin-left: inherit;
-}
 
-table#mygames, div#stats, select, input {
+table#mygames, div#stats {
     margin-left: 10px;
 }
 
