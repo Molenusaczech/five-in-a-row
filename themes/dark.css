@@ -9,32 +9,55 @@
 }
 
 body {
-    background-color: #000000;
+    background-color: #202020;
 }
 
 td, #p1name, #p2name, th{
-    color: #277de0;
+    color: #3f7def;
 }
 
 header {
-    background-color: #193b63;
-    color: #277de0;
+    background-color: #0e0e0e;
+    color: #ffffff;
 }
-
+header a:first-of-type {
+    margin-left: 10px;
+}
 header a {
-    color: #277de0;
+    color: #c7c7c7;
+}
+header a:hover {
+    color: #ffffff;
+    text-decoration: underline;
 }
 
 .lastmove {
     background-color: #1464c0;
 }
 
-p, a, h1, form{
-    color: #277de0;
+p, a, h1, h2, div, form{
+    color: #3f7def;
 }
 
 .hrefbutton {
-    border: 2px solid #277de0;
+    border: 2px solid #16304d;
     background-color: #193b63;
     color: #277de0;
+}
+
+.hrefbutton:hover {
+    border: 2px solid #83bdff;
+    color: #83bdff;
+    background-color: #1c4574;
+    transition: 0.1s;
+}
+input {
+    background-color: #0f0f0f;    
+    border-color: #383838;
+    color: #c7c7c7;
+}
+input, select {
+    background-color: #0f0f0f;    
+    border-color: #383838;
+    color: #c7c7c7;
 }
