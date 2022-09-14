@@ -1,50 +1,70 @@
-.field {
-    background-color: #00234b;
-    border: 1px solid #277de0;
-    color: #bddcff;
-}
-
-.field:hover {
-    background-color: #1464c0;
-}
-
 body {
     background-color: #202020;
+    color: #cccccc;
 }
-
-td, #p1name, #p2name, th{
-    color: #3f7def;
+#main {
+    border-color: #1c60ad;
 }
-
+.field {
+    background-color: #5c6269;
+    border-color: #ffffff;
+    color: #141414;
+}
+.field:hover {
+    background-color: #111111;
+    color: #777777;
+}
 header {
     background-color: #0e0e0e;
     color: #ffffff;
 }
+
 header a:first-of-type {
     margin-left: 10px;
 }
+
 header a {
     color: #c7c7c7;
 }
+
 header a:hover {
     color: #ffffff;
     text-decoration: underline;
 }
+p, a, h1, h2, div, form{
+    color: #cccccc;
+}
 
+td, #p1name, #p2name, th{
+    color: #cccccc;
+}
+td {
+    border-color: #1c60ad;
+}
+#status {
+    color: #1c60ad;
+}
+#choose {
+    background-color: #5c6269;
+    border-color: #ffffff;
+    color: #ffffff;
+}
+.symbolChoose {
+    border-color: #ffffff;
+    color: #141414;
+}
+.symbolChoose:hover {
+    background-color: #111111;
+    color: #777777;
+}
 .lastmove {
     background-color: #1464c0;
 }
-
-p, a, h1, h2, div, form{
-    color: #3f7def;
-}
-
 .hrefbutton {
     border: 2px solid #16304d;
     background-color: #193b63;
     color: #277de0;
 }
-
 .hrefbutton:hover {
     border: 2px solid #83bdff;
     color: #83bdff;
